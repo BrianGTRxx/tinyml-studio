@@ -1,0 +1,102 @@
+{
+  "name": "tinyml-studio",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Interfaz Electron de TinyML Studio (esqueleto seguro + sidecar Python)",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "smoke": "electron . --disable-gpu",
+    "test": "node --test \"test/*.test.js\"",
+    "icons": "python scripts/make-icons.py",
+    "build:raw": "node scripts/build.js raw",
+    "build:offline": "node scripts/build.js offline",
+    "dist:dir": "node scripts/build.js raw dir",
+    "dist:dir:offline": "node scripts/build.js offline dir",
+    "dist:linux": "node scripts/build.js raw linux",
+    "dist:win": "node scripts/build.js raw win",
+    "dist:linux:offline": "node scripts/build.js offline linux",
+    "dist:win:offline": "node scripts/build.js offline win",
+    "pack": "node scripts/build.js raw dir"
+  },
+  "devDependencies": {
+    "electron": "45.2.3",
+    "electron-builder": "26.16.1"
+  },
+  "homepage": "https://github.com/BrianGTRxx/tinyml-studio",
+  "author": {
+    "name": "BrianGTRxx",
+    "email": "noreply@users.noreply.github.com"
+  },
+  "license": "GPL-3.0-only",
+  "build": {
+    "appId": "io.github.briangtrxx.tinymlstudio",
+    "productName": "TinyML Studio",
+    "copyright": "TinyML Studio",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**",
+      "assets/**",
+      "package.json",
+      "!**/*.test.js",
+      "!assets/icon.svg",
+      "!assets/icon.ico",
+      "!scripts/**",
+      "!build-resources/**"
+    ],
+    "extraResources": [
+      {
+        "from": "build-resources/env",
+        "to": "env"
+      },
+      {
+        "from": "build-resources/uv",
+        "to": "uv"
+      },
+      {
+        "from": "build-resources/core",
+        "to": "core"
+      }
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "artifactName": "TinyML-Studio-${env.TINYML_VARIANT}-${version}-win-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "artifactName": "TinyML-Studio-${env.TINYML_VARIANT}-Setup-${version}.${ext}"
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Development",
+      "synopsis": "TinyML para ESP32-S3 y microcontroladores",
+      "description": "Limpia datos, entrena modelos y exporta .tflite/.onnx/.h/C verificando que caben en la placa.",
+      "maintainer": "TinyML Studio <noreply@users.noreply.github.com>",
+      "artifactName": "TinyML-Studio-${env.TINYML_VARIANT}-${version}-linux-${arch}.${ext}",
+      "executableName": "tinyml-studio",
+      "syncDesktopName": true
+    },
+    "deb": {
+      "packageCategory": "science"
+    },
+    "appImage": {
+      "artifactName": "TinyML-Studio-${env.TINYML_VARIANT}-${version}-linux-${arch}.${ext}"
+    },
+    "publish": null,
+    "afterPack": "scripts/after-pack.js"
+  },
+  "desktopName": "tinyml-studio.desktop"
+}

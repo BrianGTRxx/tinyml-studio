@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TinyML Studio</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <header class="top">
+    <h1><img class="logo" src="assets/icon.svg" alt="" width="24" height="24">TinyML Studio</h1>
+    <span id="status" class="badge">…</span>
+    <span id="hwchip" class="badge" hidden></span>
+    <span class="spacer"></span>
+    <button id="btn-load-recipe" type="button" class="ghost sm"></button>
+    <button id="btn-save-recipe" type="button" class="ghost sm" disabled></button>
+    <span id="lang-seg" class="seg" role="group" aria-label="Language"></span>
+    <span id="theme-seg" class="seg" role="group" aria-label="Theme"></span>
+  </header>
+  <div id="update-banner" class="update-banner" role="status" hidden></div>
+  <div class="layout">
+    <nav id="steps"></nav>
+    <main>
+      <section id="view"></section>
+      <footer class="actions">
+        <button id="prev" type="button" class="ghost"></button>
+        <span id="where" class="where"></span>
+        <button id="next" type="button"></button>
+      </footer>
+    </main>
+  </div>
+  <div id="report" aria-hidden="true"></div>
+  <script src="util.js"></script>
+  <script src="icons.js"></script>
+  <script src="components.js"></script>
+  <script src="charts.js"></script>
+  <script src="export.js"></script>
+  <script src="quality.js"></script>
+  <script src="graph.js"></script>
+  <script src="arduino.js"></script>
+  <script src="benchmark.js"></script>
+  <script src="groups.js"></script>
+  <script src="tune.js"></script>
+  <script src="modelinfo.js"></script>
+  <script src="monitor.js"></script>
+  <script src="history.js"></script>
+  <script src="setup.js"></script>
+  <script src="env.js"></script>
+  <script src="updates.js"></script>
+  <script src="report.js"></script>
+  <script src="tour.js"></script>
+  <script src="wizard.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

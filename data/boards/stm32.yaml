@@ -1,0 +1,485 @@
+# Placas STM32. Los datasheets de st.com NO se pudieron leer (el sitio no responde desde el PC del autor); 8 de 9 se contrastaron con los CMSIS-Pack de ST (evidencia pack_check).
+boards:
+- id: stm32f103
+  name: STM32F103 (Blue Pill / C8-CB)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32F103C8/CB
+  cpu: Arm Cortex-M3
+  clock_mhz: 72
+  arch: armv7-m
+  fpu: false
+  sram_kb: 20
+  flash_kb: 64
+  variants:
+  - id: c8
+    name: STM32F103C8
+    flash_kb: 64
+  - id: cb
+    name: STM32F103CB
+    flash_kb: 128
+  usable:
+    ram_kb: 8
+    flash_kb: 54
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      10 KB'
+  ai_tier: classical_only
+  ai_note: '20 KB de SRAM y 64 KB de flash (la variante CB llega a 128 KB): solo caben árboles/lineales en C y, con suerte,
+    una red diminuta; TFLM completo no es realista. Sin FPU (la inferencia float va por software). Muchas placas ''Blue Pill''
+    baratas llevan clones: comprueba el chip.'
+  accelerators: []
+  runtimes:
+  - código C (clásicos)
+  - X-CUBE-AI (redes mínimas)
+  evidence:
+  - field: clock_mhz
+    value: 72 MHz
+    url: https://www.st.com/resource/en/datasheet/stm32f103c8.pdf
+    note: 'datasheet DS5319: 72 MHz maximum frequency, Cortex-M3'
+  - field: sram_kb
+    value: 20 KB
+    url: https://www.st.com/resource/en/datasheet/stm32f103c8.pdf
+    note: 'datasheet: 20 Kbytes of embedded SRAM accessed at CPU clock speed with 0 wait states'
+  - field: flash_kb
+    value: 64 KB
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html
+    note: 'página ST del C8: 64 Kbytes of Flash memory, 72 MHz CPU; el datasheet cubre x8 (64 KB) y xB (128 KB)'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32f103c8.pdf
+- id: stm32f411
+  name: STM32F411 (Black Pill / Nucleo-F411RE)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32F411xE
+  cpu: Arm Cortex-M4F
+  clock_mhz: 100
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 128
+  flash_kb: 512
+  variants:
+  - id: xc
+    name: STM32F411xC
+    flash_kb: 256
+  - id: xe
+    name: STM32F411xE
+    flash_kb: 512
+  usable:
+    ram_kb: 51
+    flash_kb: 480
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      32 KB'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4 con FPU de precisión simple y 128 KB de SRAM: TFLM/X-CUBE-AI con redes pequeñas (p. ej. CNN1D o MLP
+    int8 de decenas de KB). Sin acelerador NN.'
+  accelerators:
+  - FPU precisión simple
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 100 MHz
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32f411.html
+    note: 'ST: Cortex-M4 operating at a frequency of up to 100 MHz, FPU de precisión simple'
+  - field: sram_kb
+    value: 128 KB
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32f411.html
+    note: 'ST: 256 to 512 Kbytes of Flash and up to 128 Kbytes of SRAM'
+  - field: flash_kb
+    value: 512 KB
+    url: https://www.st.com/resource/en/datasheet/stm32f411ce.pdf
+    note: 'datasheet DS10314: variantes xC 256 KB y xE 512 KB'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32F4xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32F411CE: Cortex-M4
+      con FPU a 100 MHz, SRAM 128 KB, flash 512 KB (STM32F411CEUx).'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32f411ce.pdf
+- id: stm32f446
+  name: STM32F446 (Nucleo-F446RE)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32F446xE
+  cpu: Arm Cortex-M4F
+  clock_mhz: 180
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 128
+  flash_kb: 512
+  variants:
+  - id: xc
+    name: STM32F446xC
+    flash_kb: 256
+  - id: xe
+    name: STM32F446xE
+    flash_kb: 512
+  usable:
+    ram_kb: 51
+    flash_kb: 480
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      32 KB'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4F a 180 MHz, 128 KB de SRAM (112+16 KB; 4 KB de backup aparte): redes pequeñas con TFLM/X-CUBE-AI. Sin
+    acelerador NN.'
+  accelerators:
+  - FPU precisión simple
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 180 MHz
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32f446.html
+    note: 'ST: Cortex-M4 with FPU up to 180 MHz'
+  - field: sram_kb
+    value: 128 KB
+    url: https://www.st.com/resource/en/datasheet/stm32f446re.pdf
+    note: 'datasheet DS10693: SRAM1 112 KB + SRAM2 16 KB = 128 KB (más 4 KB backup SRAM)'
+  - field: flash_kb
+    value: 512 KB
+    url: https://www.st.com/resource/en/datasheet/stm32f446re.pdf
+    note: 'datasheet: 512 KB en xE; xC/xM-C listados con 256 KB'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32F4xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32F446RE: Cortex-M4
+      con FPU a 180 MHz, SRAM 128 KB, flash 512 KB (STM32F446RETx).'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32f446re.pdf
+- id: stm32l476
+  name: STM32L476 (Nucleo-L476RG)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32L476xG
+  cpu: Arm Cortex-M4F (ultra bajo consumo)
+  clock_mhz: 80
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 128
+  flash_kb: 1024
+  variants:
+  - id: xe
+    name: STM32L476xE
+    flash_kb: 512
+  - id: xg
+    name: STM32L476xG
+    flash_kb: 1024
+  usable:
+    ram_kb: 51
+    flash_kb: 992
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      32 KB'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4F de bajo consumo a 80 MHz, 128 KB de SRAM (96 KB + 32 KB con paridad) y hasta 1 MB de flash: buena para
+    redes pequeñas con poca energía; la latencia es mayor que en M7/M33.'
+  accelerators:
+  - FPU precisión simple
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 80 MHz
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32l476rg.html
+    note: 'ST: ultra-low-power Cortex-M4 MCU 80 MHz con FPU'
+  - field: sram_kb
+    value: 128 KB
+    url: https://www.st.com/resource/en/datasheet/stm32l476je.pdf
+    note: 'datasheet DS10198: 96 KB en 0x2000 0000 (SRAM1) y 32 KB en 0x1000 0000 (SRAM2)'
+  - field: flash_kb
+    value: 1024 KB
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32l476rg.html
+    note: 'ST: hasta 1 Mbyte de flash en dos bancos; las variantes RE/QE tienen 512 KB'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32L4xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32L476RG: Cortex-M4
+      con FPU a 80 MHz, SRAM1 96 KB + SRAM2 32 KB, flash 1024 KB; el L476JE tiene 512 KB.'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32l476je.pdf
+- id: stm32u585
+  name: STM32U585 (MCU del Arduino UNO Q)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32U585
+  cpu: Arm Cortex-M33 (TrustZone, FPU)
+  clock_mhz: 160
+  arch: armv8-m.main
+  fpu: true
+  sram_kb: 786
+  flash_kb: 2048
+  usable:
+    ram_kb: 314
+    flash_kb: 2016
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      32 KB'
+  ai_tier: tflm_medium
+  ai_note: 'Cortex-M33 a 160 MHz con ~786 KB de SRAM y 2 MB de flash: redes int8 medianas con TFLM/ST Edge AI. Sin NPU. Discrepancia
+    menor: la página de ST dice 786 KB (ECC off) / 722 KB (ECC on); la tabla del datasheet lista 784 KB.'
+  accelerators:
+  - FPU
+  - instrucciones DSP
+  - TrustZone
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 160 MHz
+    url: https://www.st.com/resource/en/datasheet/stm32u585ai.pdf
+    note: 'datasheet DS13086: Cortex-M33 con TrustZone y FPU hasta 160 MHz'
+  - field: sram_kb
+    value: 786 KB
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32u575-585.html
+    note: 'ST: 786-Kbyte SRAM con ECC off o 722-Kbyte incl. 322 KB con ECC on (datasheet: 784 KB)'
+  - field: flash_kb
+    value: 2048 KB
+    url: https://www.st.com/resource/en/datasheet/stm32u585ai.pdf
+    note: 'datasheet: 2 Mbytes of embedded flash memory, 2 bancos'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32U5xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32U585AI: Cortex-M33
+      con FPU a 160 MHz, SRAM 192+64+512+16 = 784 KB (coincide con la tabla del datasheet), flash 2048 KB.'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32u585ai.pdf
+- id: stm32h743
+  name: STM32H743 (Nucleo-H743ZI2)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32H743xI
+  cpu: Arm Cortex-M7 (FPU doble precisión)
+  clock_mhz: 480
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 1024
+  flash_kb: 2048
+  variants:
+  - id: xg
+    name: STM32H743xG
+    flash_kb: 1024
+  - id: xi
+    name: STM32H743xI
+    flash_kb: 2048
+  usable:
+    ram_kb: 409
+    flash_kb: 1792
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      256 KB; los 1024 KB incluyen TCM (192 KB) y SRAM de usuario (hasta 864 KB) no contiguos'
+  ai_tier: tflm_medium
+  ai_note: Cortex-M7 a 480 MHz, hasta 1 MB de RAM repartida en bloques (TCM + SRAM de usuario + 4 KB backup; no es contigua)
+    y 2 MB de flash (xI; xG tiene 1 MB). Redes medianas con TFLM/ST Edge AI; sin NPU. A 480 MHz hace falta silicio rev. V.
+  accelerators:
+  - FPU doble precisión
+  - instrucciones DSP
+  - caché L1
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 480 MHz
+    url: https://www.st.com/resource/en/datasheet/stm32h743bi.pdf
+    note: 'datasheet: Cortex-M7 hasta 480 MHz (solo rev. V para 480 MHz)'
+  - field: sram_kb
+    value: 1024 KB
+    url: https://www.st.com/resource/en/datasheet/stm32h743bi.pdf
+    note: 'datasheet: up to 1 Mbyte of RAM: 192 KB TCM, up to 864 KB user SRAM, 4 KB backup'
+  - field: flash_kb
+    value: 2048 KB
+    url: https://www.st.com/resource/en/datasheet/stm32h743bi.pdf
+    note: 'datasheet: 1 MB por banco en xI (512 KB por banco en xG)'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32H7xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32H743BI: Cortex-M7
+      con FPU de doble precisión a 480 MHz; DTCM 128 KB + RAM_D1 512 KB + RAM_D2 288 KB + RAM_D3 64 KB (+ ITCM 64 KB); flash
+      2 x 1024 KB.'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32h743bi.pdf
+- id: stm32h747
+  name: STM32H747 (Portenta H7 / GIGA R1 / Nicla Vision)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32H747xI
+  cpu: Arm Cortex-M7 + Cortex-M4 (asimétrico)
+  cores: 2
+  clock_mhz: 480
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 1024
+  flash_kb: 2048
+  variants:
+  - id: xg
+    name: STM32H747xG
+    flash_kb: 1024
+  - id: xi
+    name: STM32H747xI
+    flash_kb: 2048
+  usable:
+    ram_kb: 409
+    flash_kb: 1792
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      256 KB; RAM repartida en bloques no contiguos (TCM + SRAM de usuario)'
+  ai_tier: tflm_medium
+  ai_note: 'Doble núcleo: M7 a 480 MHz y M4 a 240 MHz (el M4 queda para tareas auxiliares). Mismo mapa de memoria que el H743:
+    hasta 1 MB de RAM no contigua y 2 MB de flash (xI). Sin NPU.'
+  accelerators:
+  - FPU en ambos núcleos
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: 2
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32h747-757.html
+    note: 'ST: dual-core Arm M7/M4'
+  - field: clock_mhz
+    value: 480 MHz (M7) / 240 MHz (M4)
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32h747-757.html
+    note: 'ST: Cortex-M7 hasta 480 MHz y Cortex-M4 hasta 240 MHz, ambos con FPU'
+  - field: sram_kb
+    value: 1024 KB
+    url: https://www.st.com/resource/en/datasheet/stm32h747ag.pdf
+    note: 'datasheet DS12930: up to 1 Mbyte RAM (192 KB TCM, up to 864 KB user SRAM, 4 KB backup)'
+  - field: flash_kb
+    value: 2048 KB
+    url: https://www.st.com/resource/en/datasheet/stm32h747ag.pdf
+    note: 'datasheet: 2 MB en xI; xG 1 MB'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32H7xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32H747XI: Cortex-M7
+      a 480 MHz y Cortex-M4 a 240 MHz; misma disposición de RAM que el H743; flash 2 x 1024 KB.'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32h747ag.pdf
+- id: stm32n6
+  name: STM32N6 (con NPU Neural-ART)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32N6x7
+  cpu: Arm Cortex-M55 (Helium)
+  clock_mhz: 800
+  arch: armv8.1-m.main
+  sram_kb: 4200
+  flash_kb: null
+  usable:
+    ram_kb: 1680
+    flash_kb: null
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante)
+      (flash interna no declarada: el código va en flash externa xSPI según la placa)'
+  ai_tier: tflm_medium
+  ai_note: 'Cortex-M55 a 800 MHz con ~4,2 MB de RAM contigua y NPU Neural-ART (600 GOPS, 288 MAC/ciclo según resumen de ST)
+    solo en la línea N6x7; la N6x5 no tiene NPU. Se despliega con ST Edge AI Core (modelos cuantizados), no con TFLM genérico
+    en la NPU. Flash interna: ninguna declarada en lo buscado, null. Cifra de MACs varía entre fuentes (72-2304 configurable
+    vs 288).'
+  accelerators:
+  - NPU ST Neural-ART (600 GOPS)
+  - vectoriales Helium (M55)
+  runtimes:
+  - ST Edge AI Core
+  - TFLM (solo CPU)
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 800 MHz
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32n6-series.html
+    note: 'ST: Cortex-M55 a 800 MHz; NPU a 1 GHz, 600 GOPS'
+  - field: sram_kb
+    value: 4200 KB (4,2 MB)
+    url: https://blog.st.com/stm32n6/
+    note: 'ST: 4.2 Mbytes of contiguous embedded RAM'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32N6xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32N657: Cortex-M55
+      a 800 MHz; ninguna flash interna (solo bancos de SRAM, unos 4,1 MB sumados); coincide con ''4,2 MB de RAM contigua''
+      de ST.'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/en/microcontrollers-microprocessors/stm32n6-series.html
+- id: stm32g474
+  name: STM32G474 (Nucleo-G474RE)
+  vendor: STMicroelectronics
+  family: STM32
+  soc: STM32G474xE
+  cpu: Arm Cortex-M4F
+  clock_mhz: 170
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 128
+  flash_kb: 512
+  variants:
+  - id: xb
+    name: STM32G474xB
+    flash_kb: 128
+  - id: xc
+    name: STM32G474xC
+    flash_kb: 256
+  - id: xe
+    name: STM32G474xE
+    flash_kb: 512
+  usable:
+    ram_kb: 51
+    flash_kb: 480
+    rule: '40 % de la SRAM (heurística nuestra); flash menos reserva de firmware/arranque (supuesto nuestro, no dato del fabricante):
+      32 KB; 128 KB = SRAM1 80 + SRAM2 16 + CCM 32'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4F a 170 MHz con 128 KB de SRAM (incluye 32 KB CCM no accesible por DMA) y hasta 512 KB de flash: redes
+    pequeñas; orientada a control de motores/potencia más que a IA.'
+  accelerators:
+  - FPU precisión simple
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 170 MHz
+    url: https://www.st.com/resource/en/datasheet/stm32g474cb.pdf
+    note: 'datasheet: Cortex-M4 hasta 170 MHz (Range 1 boost)'
+  - field: sram_kb
+    value: 128 KB
+    url: https://www.st.com/resource/en/datasheet/stm32g474cb.pdf
+    note: 'datasheet: SRAM1 80 KB + SRAM2 16 KB + CCM 32 KB'
+  - field: flash_kb
+    value: 512 KB
+    url: https://www.st.com/en/microcontrollers-microprocessors/stm32g474me.html
+    note: 'ST: up to 512 Kbytes of Flash and 128 Kbytes of SRAM (familia 128/256/512 KB)'
+  - field: pack_check
+    value: contraste con el CMSIS-Pack de ST
+    url: https://github.com/Open-CMSIS-Pack/STM32G4xx_DFP
+    note: 'Contraste (NO es un datasheet; paquete DFP que mantiene ST en GitHub, leído 2026-10-28): STM32G474CB/RE: Cortex-M4
+      con FPU a 170 MHz, SRAM 128 KB, flash 128 KB (CB) o 512 KB (RE).'
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-15'
+  source: https://www.st.com/resource/en/datasheet/stm32g474cb.pdf

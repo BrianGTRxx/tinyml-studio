@@ -1,0 +1,416 @@
+# Placas Raspberry Pi. Pico, Pico 2, Zero 2 W, 3A+, 3B+, 4B y 5: product briefs/datasheets oficiales leidos (ver evidencias, version y pagina). Zero original: sin PDF oficial, solo paginas oficiales.
+boards:
+- id: rpi-zero
+  name: Raspberry Pi Zero / Zero W
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: Broadcom BCM2835
+  cpu: ARM11 (ARM1176JZF-S) un núcleo
+  cores: 1
+  clock_mhz: 1000
+  arch: armv6
+  ram_kb: 524288
+  sram_kb: null
+  flash_kb: null
+  variants:
+  - id: zero
+    name: Raspberry Pi Zero
+    ram_kb: 524288
+  - id: zero-w
+    name: Raspberry Pi Zero W (Wi-Fi 2,4 GHz + Bluetooth)
+    ram_kb: 524288
+  usable:
+    ram_kb: 131072
+    flash_kb: null
+    rule: '25 % de la RAM de la variante más pequeña (heurística nuestra, no dato oficial); el SO, el escritorio y otros procesos
+      usan el resto. Flash: no aplica, el almacenamiento es una tarjeta SD.'
+  ai_tier: linux_runtime
+  ai_note: 'Un solo núcleo ARM11 (armv6, sin NEON) a 1 GHz y 512 MB: es débil. Sirve para inferencia muy pequeña con tflite-runtime/ONNX
+    Runtime si hay ruedas para armv6 (no verificado); en la práctica es mejor modelos clásicos o redes diminutas. Una sola
+    variante de RAM (512 MB), por eso ram_kb = 524288.'
+  accelerators: []
+  runtimes:
+  - 'tflite-runtime / LiteRT (armv6: sin ruedas oficiales confirmadas)'
+  - ONNX Runtime (no confirmado en armv6)
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: '1'
+    url: https://www.raspberrypi.com/documentation/computers/processors.html
+    note: 'Documentación oficial de procesadores (leída): el BCM2835 ''contains a single-core ARM1176JZF-S processor'' y lo
+      usan el Pi Zero y el Zero W.'
+  - field: clock_mhz
+    value: '1000'
+    url: https://www.raspberrypi.com/products/raspberry-pi-zero/
+    note: 'Página oficial del producto (leída): ''1GHz single-core CPU''.'
+  - field: ram_kb
+    value: 512 MB
+    url: https://www.raspberrypi.com/products/raspberry-pi-zero/
+    note: 'Página oficial del producto (leída): ''512MB RAM''. No existe datasheet ni product brief PDF oficial del Zero original
+      (comprobado: la página no enlaza ninguno y las rutas de datasheets.raspberrypi.com dan 404).'
+  source: https://www.raspberrypi.com/products/raspberry-pi-zero/
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-28'
+- id: rpi-zero-2w
+  name: Raspberry Pi Zero 2 W
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: RP3A0 (SiP con die Broadcom BCM2710A1)
+  cpu: Cortex-A53 de 4 núcleos, 64 bit
+  cores: 4
+  clock_mhz: 1000
+  arch: aarch64
+  ram_kb: 524288
+  sram_kb: null
+  flash_kb: null
+  variants: []
+  usable:
+    ram_kb: 131072
+    flash_kb: null
+    rule: '25 % de la RAM de la variante más pequeña (heurística nuestra, no dato oficial); el SO, el escritorio y otros procesos
+      usan el resto. Flash: no aplica, el almacenamiento es una tarjeta SD.'
+  ai_tier: linux_runtime
+  ai_note: 'Cuatro Cortex-A53 a 1 GHz con 512 MB (única opción): suficiente para tflite-runtime/LiteRT u ONNX Runtime con
+    redes pequeñas, sin acelerador. Memoria limitada; cuantización int8 recomendada. Sin NPU.'
+  accelerators: []
+  runtimes:
+  - LiteRT / tflite-runtime
+  - ONNX Runtime
+  - código C
+  evidence:
+  - field: cores
+    value: '4'
+    url: https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf
+    note: 'Product brief abr-2024, p. 2 (leído): ''quad-core 64-bit Arm Cortex-A53 CPU, clocked at 1GHz''.'
+  - field: clock_mhz
+    value: '1000'
+    url: https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf
+    note: 'Product brief abr-2024, p. 3 (leído): BCM2710A1, Arm Cortex-A53 a 1 GHz.'
+  - field: ram_kb
+    value: 512 MB
+    url: https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf
+    note: 'Product brief abr-2024, p. 2-3 (leído): ''RP3A0 SiP ... BCM2710A1 die with 512MB of LPDDR2 SDRAM''; producción
+      hasta enero de 2030 como mínimo.'
+  source: https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+- id: rpi-3b-plus
+  name: Raspberry Pi 3 Model B+
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: Broadcom BCM2837B0
+  cpu: Cortex-A53 de 4 núcleos, 64 bit
+  cores: 4
+  clock_mhz: 1400
+  arch: aarch64
+  ram_kb: 1048576
+  sram_kb: null
+  flash_kb: null
+  variants: []
+  usable:
+    ram_kb: 262144
+    flash_kb: null
+    rule: '25 % de la RAM de la variante más pequeña (heurística nuestra, no dato oficial); el SO, el escritorio y otros procesos
+      usan el resto. Flash: no aplica, el almacenamiento es una tarjeta SD.'
+  ai_tier: linux_runtime
+  ai_note: 1 GB (única opción; el SoC no direcciona más). Pico de 1,4 GHz; la documentación oficial dice que al alcanzar el
+    límite térmico suave baja de 1,4 a 1,2 GHz. LiteRT/tflite-runtime u ONNX Runtime con redes pequeñas/medianas en CPU; sin
+    NPU. Producción garantizada hasta enero de 2028 como mínimo según el brief (oct-2025); la 3A+ llega hasta enero de 2030.
+  accelerators: []
+  runtimes:
+  - LiteRT / tflite-runtime
+  - ONNX Runtime
+  - código C
+  evidence:
+  - field: cores
+    value: '4'
+    url: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-plus-product-brief.pdf
+    note: 'Product brief oct-2025, p. 2 (leído): procesador de 64 bits de cuatro núcleos a 1,4 GHz.'
+  - field: clock_mhz
+    value: '1400'
+    url: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-plus-product-brief.pdf
+    note: 'Product brief oct-2025, p. 3 (leído): ''Broadcom BCM2837B0, Cortex-A53 64-bit SoC @ 1.4GHz''.'
+  - field: ram_kb
+    value: 1 GB
+    url: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-plus-product-brief.pdf
+    note: 'Product brief oct-2025, p. 3 (leído): ''Memory: 1GB''; producción hasta enero de 2028 como mínimo. (LPDDR2 viene
+      de la página de producto, no del brief.)'
+  source: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-plus-product-brief.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+- id: rpi-3a-plus
+  name: Raspberry Pi 3 Model A+
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: Broadcom BCM2837B0
+  cpu: Cortex-A53 de 4 núcleos, 64 bit
+  cores: 4
+  clock_mhz: 1400
+  arch: aarch64
+  ram_kb: 524288
+  sram_kb: null
+  flash_kb: null
+  variants: []
+  usable:
+    ram_kb: 131072
+    flash_kb: null
+    rule: '25 % de la RAM de la variante más pequeña (heurística nuestra, no dato oficial); el SO, el escritorio y otros procesos
+      usan el resto. Flash: no aplica, el almacenamiento es una tarjeta SD.'
+  ai_tier: linux_runtime
+  ai_note: 'Mismo SoC que la 3B+ pero 512 MB: menos margen para modelos grandes. LiteRT/ONNX Runtime con redes pequeñas, cuantizadas;
+    sin NPU.'
+  accelerators: []
+  runtimes:
+  - LiteRT / tflite-runtime
+  - ONNX Runtime
+  - código C
+  evidence:
+  - field: cores
+    value: '4'
+    url: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-a-plus-product-brief.pdf
+    note: 'Product brief abr-2024, p. 2 (leído): procesador de cuatro núcleos de 64 bits a 1,4 GHz.'
+  - field: clock_mhz
+    value: '1400'
+    url: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-a-plus-product-brief.pdf
+    note: 'Product brief abr-2024, p. 3 (leído): ''Broadcom BCM2837B0, Cortex-A53 64-bit SoC @ 1.4 GHz''.'
+  - field: ram_kb
+    value: 512 MB
+    url: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-a-plus-product-brief.pdf
+    note: 'Product brief abr-2024, p. 3 (leído): ''Memory: 512MB LPDDR2 SDRAM''; producción hasta enero de 2030 como mínimo.'
+  source: https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-a-plus-product-brief.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+- id: rpi-4b
+  name: Raspberry Pi 4 Model B
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: Broadcom BCM2711
+  cpu: Cortex-A72 de 4 núcleos, 64 bit
+  cores: 4
+  clock_mhz: 1800
+  arch: aarch64
+  ram_kb: 1048576
+  sram_kb: null
+  flash_kb: null
+  variants:
+  - id: 1gb
+    name: Raspberry Pi 4 Model B 1 GB
+    ram_kb: 1048576
+  - id: 2gb
+    name: Raspberry Pi 4 Model B 2 GB
+    ram_kb: 2097152
+  - id: 3gb
+    name: Raspberry Pi 4 Model B 3 GB
+    ram_kb: 3145728
+  - id: 4gb
+    name: Raspberry Pi 4 Model B 4 GB
+    ram_kb: 4194304
+  - id: 8gb
+    name: Raspberry Pi 4 Model B 8 GB
+    ram_kb: 8388608
+  usable:
+    ram_kb: 262144
+    flash_kb: null
+    rule: '25 % de la RAM de la variante más pequeña (heurística nuestra, no dato oficial); el SO, el escritorio y otros procesos
+      usan el resto. Flash: no aplica, el almacenamiento es una tarjeta SD.'
+  ai_tier: linux_runtime
+  ai_note: 'ram_kb = 1 GB, la variante más pequeña (las variantes de 2/3/4/8 GB están en ''variants''; el brief de oct-2026
+    confirma la de 3 GB). Con 4 núcleos A72 corre LiteRT/tflite-runtime y ONNX Runtime en CPU con holgura; sin NPU en placa.
+    Reloj: el brief (oct-2026) da 1,8 GHz; el datasheet release 1.1 (mar-2024) y la documentación de procesadores dan 1,5
+    GHz (revisiones antiguas del chip); se usa 1800 por ser el documento más reciente. NOTA: no existe una ''Raspberry Pi
+    4 Model A'' oficial (la documentación oficial solo lista la 4B; los modelos A son de 3A+ y anteriores): no se inventa
+    placa. Producción hasta enero de 2034 como mínimo.'
+  accelerators: []
+  runtimes:
+  - LiteRT / tflite-runtime
+  - ONNX Runtime
+  - código C
+  evidence:
+  - field: cores
+    value: '4'
+    url: https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf
+    note: 'Product brief oct-2026, p. 3 (leído): ''BCM2711, quad-core Cortex-A72 (Arm v8) 64-bit SoC''.'
+  - field: clock_mhz
+    value: '1800'
+    url: https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf
+    note: 'Product brief oct-2026, p. 3 (leído): ''@ 1.8GHz''. DISCREPANCIA: el datasheet release 1.1 (12/03/2024, p. 7, leído)
+      y la documentación de procesadores dicen 1,5 GHz; se usa el documento más reciente.'
+  - field: ram_kb
+    value: 1 GB (variantes 1/2/3/4/8 GB)
+    url: https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf
+    note: 'Product brief oct-2026, p. 3 (leído): ''1GB, 2GB, 3GB, 4GB or 8GB LPDDR4 (depending on model)''. El datasheet release
+      1.1 lista 1, 2 y 4 GB (y 8 GB en la introducción).'
+  source: https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+- id: rpi-5
+  name: Raspberry Pi 5
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: Broadcom BCM2712
+  cpu: Cortex-A76 de 4 núcleos, 64 bit
+  cores: 4
+  clock_mhz: 2400
+  arch: aarch64
+  ram_kb: 1048576
+  sram_kb: null
+  flash_kb: null
+  variants:
+  - id: 1gb
+    name: Raspberry Pi 5 1 GB
+    ram_kb: 1048576
+  - id: 2gb
+    name: Raspberry Pi 5 2 GB
+    ram_kb: 2097152
+  - id: 4gb
+    name: Raspberry Pi 5 4 GB
+    ram_kb: 4194304
+  - id: 8gb
+    name: Raspberry Pi 5 8 GB
+    ram_kb: 8388608
+  - id: 16gb
+    name: Raspberry Pi 5 16 GB
+    ram_kb: 16777216
+  usable:
+    ram_kb: 262144
+    flash_kb: null
+    rule: '25 % de la RAM de la variante más pequeña (heurística nuestra, no dato oficial); el SO, el escritorio y otros procesos
+      usan el resto. Flash: no aplica, el almacenamiento es una tarjeta SD.'
+  ai_tier: linux_runtime
+  ai_note: 'ram_kb = 1 GB, la variante más pequeña listada (opciones 1/2/4/8/16 GB en ''variants''). Cortex-A76 a 2,4 GHz:
+    la SBC más potente de la familia para LiteRT/ONNX Runtime en CPU. Sin NPU en la placa; el AI HAT+ (Hailo, 13 o 26 TOPS,
+    PCIe) es un complemento aparte y no se cuenta aquí.'
+  accelerators: []
+  runtimes:
+  - LiteRT / tflite-runtime
+  - ONNX Runtime
+  - código C
+  evidence:
+  - field: cores
+    value: '4'
+    url: https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf
+    note: 'Product brief oct-2026, p. 3 (leído): ''BCM2712 2.4GHz quad-core 64-bit Arm Cortex-A76 CPU''.'
+  - field: clock_mhz
+    value: '2400'
+    url: https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf
+    note: 'Product brief oct-2026, p. 2-3 (leído): Cortex-A76 a 2,4 GHz.'
+  - field: ram_kb
+    value: 1 GB (variantes 1/2/4/8/16 GB)
+    url: https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf
+    note: 'Product brief oct-2026, p. 3 (leído): ''LPDDR4X-4267 SDRAM (options for 1GB, 2GB, 4GB, 8GB and 16GB)''; producción
+      hasta enero de 2036 como mínimo.'
+  source: https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+- id: rpi-pico
+  name: Raspberry Pi Pico / Pico W
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: RP2040
+  cpu: Arm Cortex-M0+ de 2 núcleos
+  cores: 2
+  clock_mhz: 133
+  arch: armv6-m
+  fpu: false
+  sram_kb: 264
+  ram_kb: null
+  flash_kb: 2048
+  variants:
+  - id: pico
+    name: Raspberry Pi Pico
+    flash_kb: 2048
+  - id: pico-w
+    name: Raspberry Pi Pico W (Wi-Fi 2,4 GHz + Bluetooth 5.2)
+    flash_kb: 2048
+  usable:
+    ram_kb: 105
+    flash_kb: 1024
+    rule: 40 % de la SRAM y 50 % de la flash (heurística nuestra, no dato oficial); el resto para pila, runtime y firmware
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M0+ sin FPU ni instrucciones DSP: TFLM solo con redes diminutas cuantizadas int8 (p. ej. KWS/sensores pequeños)
+    y clasificadores clásicos en C. La clasificación tflm_small es juicio nuestro, no dato del fabricante. El RP2040 no tiene
+    flash interna: los 2 MB son de la placa (hasta 16 MB externos admite el chip).'
+  accelerators: []
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: '2'
+    url: https://datasheets.raspberrypi.com/pico/pico-product-brief.pdf
+    note: 'Product brief de Pico (ene-2021), p. 3 (leído): ''Dual-core Arm Cortex-M0+ @ 133MHz''.'
+  - field: clock_mhz
+    value: '133'
+    url: https://datasheets.raspberrypi.com/rp2040/rp2040-product-brief.pdf
+    note: 'Product brief del RP2040 (ago-2022), p. 3 (leído): ''Dual ARM Cortex-M0+ @ 133 MHz''.'
+  - field: sram_kb
+    value: 264 kB
+    url: https://datasheets.raspberrypi.com/rp2040/rp2040-product-brief.pdf
+    note: 'Product brief del RP2040 (ago-2022), p. 3 (leído): ''264kB on-chip SRAM in six independent banks''; hasta 16 MB
+      de flash fuera del chip por QSPI.'
+  - field: flash_kb
+    value: 2 MB
+    url: https://datasheets.raspberrypi.com/pico/pico-product-brief.pdf
+    note: 'Product brief de Pico (ene-2021), p. 3 (leído): ''264KB on-chip SRAM; 2MB on-board QSPI Flash''. Pico W (brief
+      abr-2024, p. 3, leído): igual.'
+  source: https://datasheets.raspberrypi.com/pico/pico-product-brief.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+- id: rpi-pico-2
+  name: Raspberry Pi Pico 2
+  vendor: Raspberry Pi
+  family: Raspberry Pi
+  soc: RP2350 (RP2350A)
+  cpu: Arm Cortex-M33 de 2 núcleos (o 2 RISC-V Hazard3, a elegir)
+  cores: 2
+  clock_mhz: 150
+  arch: armv8-m
+  sram_kb: 520
+  ram_kb: null
+  flash_kb: 4096
+  variants: []
+  usable:
+    ram_kb: 208
+    flash_kb: 2048
+    rule: 40 % de la SRAM y 50 % de la flash (heurística nuestra, no dato oficial); el resto para pila, runtime y firmware
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M33 con FPU (el brief del RP2350 lo indica; el DSP según Arm) con el doble de RAM que el Pico: TFLM con
+    redes pequeñas cuantizadas. La clasificación es juicio nuestro. El RP2350A no lleva flash interna; los 4 MB son de la
+    placa (las variantes RP2354 integran 2 MB). El chip admite hasta 16 MB de flash/PSRAM externa por QSPI. No se ha verificado
+    la variante Pico 2 W.'
+  accelerators:
+  - FPU (Cortex-M33)
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: '2'
+    url: https://datasheets.raspberrypi.com/rp2350/rp2350-product-brief.pdf
+    note: 'Product brief del RP2350 (ago-2024), p. 3 (leído): ''Dual Arm Cortex-M33 or dual Hazard3 RISC-V processors @ 150MHz''.
+      Pico 2 (datasheet release 5, p. 5, leído): igual.'
+  - field: clock_mhz
+    value: '150'
+    url: https://datasheets.raspberrypi.com/pico/pico-2-datasheet.pdf
+    note: 'Datasheet de Pico 2 (release 5), p. 5 (leído): ''at up to 150 MHz''.'
+  - field: sram_kb
+    value: 520 KB
+    url: https://datasheets.raspberrypi.com/pico/pico-2-datasheet.pdf
+    note: 'Datasheet de Pico 2 (release 5), p. 5 (leído): ''520 kB multi-bank high performance SRAM''; brief del RP2350 p.
+      3: diez bancos independientes.'
+  - field: flash_kb
+    value: 4 MB
+    url: https://datasheets.raspberrypi.com/pico/pico-2-datasheet.pdf
+    note: 'Datasheet de Pico 2 (release 5), p. 4 (leído): ''RP2350A microcontroller with 4 MB flash''. Brief del RP2350 p.
+      3: las RP2354 integran 2 MB de flash apilada; hasta 16 MB de flash/PSRAM externa por QSPI.'
+  source: https://datasheets.raspberrypi.com/pico/pico-2-datasheet.pdf
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'

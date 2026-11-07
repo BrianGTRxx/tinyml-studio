@@ -1,0 +1,84 @@
+{
+  "python": "3.12",
+  "uv": "0.13.1",
+  "note": "Los locks se generan con scripts/regen-locks.sh (uv pip compile, Python 3.12, hashes). Todos los componentes salen de UNA resolución común por plataforma, así que instalar cualquier combinación es coherente.",
+  "components": [
+    {
+      "id": "base",
+      "required": true,
+      "label": {
+        "en": "Core: data, cleaning, classical models",
+        "es": "Núcleo: datos, limpieza y modelos clásicos"
+      },
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "disk_mb": 270
+    },
+    {
+      "id": "tui",
+      "label": {
+        "en": "Terminal interface (Textual) + charts and PDF report",
+        "es": "Interfaz de terminal (Textual) + gráficas e informe PDF"
+      },
+      "platforms": [
+        "linux",
+        "windows"
+      ]
+    },
+    {
+      "id": "keras",
+      "label": {
+        "en": "Neural networks: Keras + TensorFlow (TFLite export)",
+        "es": "Redes neuronales: Keras + TensorFlow (exportación TFLite)"
+      },
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "disk_mb": 1970
+    },
+    {
+      "id": "torch",
+      "label": {
+        "en": "PyTorch (GPU training on NVIDIA CUDA or AMD ROCm)",
+        "es": "PyTorch (entrenamiento en GPU NVIDIA CUDA o AMD ROCm)"
+      },
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "note": {
+        "en": "Windows: CUDA 13.0 build from download.pytorch.org (about 2 GB download, hash-verified) so the NVIDIA GPU can be used. Linux: PyPI default (large CUDA build). ROCm builds are not included yet.",
+        "es": "Windows: build CUDA 13.0 de download.pytorch.org (unos 2 GB de descarga, con hash verificado) para poder usar la GPU NVIDIA. Linux: build por defecto de PyPI (CUDA, grande). Las builds de ROCm aún no están incluidas."
+      }
+    },
+    {
+      "id": "tflm",
+      "label": {
+        "en": "TFLite Micro (real model verification)",
+        "es": "TFLite Micro (verificación real del modelo)"
+      },
+      "platforms": [
+        "linux"
+      ],
+      "note": {
+        "en": "Only published for Linux x86-64.",
+        "es": "Solo publicado para Linux x86-64."
+      }
+    }
+  ],
+  "python_disk_mb": 107,
+  "sizes_note": "Medido en Linux x86-64 (disco ocupado, des-hardlinkeado no): base 270 MB y keras +1970 MB; el Python privado ocupa 107 MB. tui, torch y tflm sin medir; en Windows pueden variar.",
+  "uv_wheels": {
+    "linux": {
+      "filename": "uv-0.13.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "696dcf6d807d85da978f4db8472da81dccc1254b18b52cbd1367c4d923c421e0"
+    },
+    "windows": {
+      "filename": "uv-0.13.1-py3-none-win_amd64.whl",
+      "sha256": "4f693cd4feb52f08f30474c4612f24be2050472609be65b9960b635f286da284"
+    }
+  }
+}

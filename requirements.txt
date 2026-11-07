@@ -1,0 +1,26 @@
+# Núcleo (también en pyproject.toml). Congelar con pip freeze al empaquetar.
+pandas
+numpy
+fastapi
+uvicorn
+pydantic>=2
+psutil
+scikit-learn
+matplotlib
+seaborn
+plotly
+pyyaml
+jupyter
+# Redes neuronales (ADR-001: Keras/TensorFlow). Se importa de forma perezosa en la app.
+tensorflow
+# Desarrollo / pruebas
+pytest
+ruff
+httpx
+# Solo para benchmarks/adr001 (extra "bench" en pyproject.toml): torch, onnx, onnxruntime
+# micromlgen es OPCIONAL: su setup.py antiguo falla en Debian/nube (AttributeError: install_layout).
+# Instalar solo si hace falta, dentro de un venv: pip install -U setuptools wheel && pip install --no-build-isolation micromlgen
+# Alternativa mantenida: emlearn (ver ADR de exportacion de modelos clasicos)
+textual
+pillow
+fpdf2

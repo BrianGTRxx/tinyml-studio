@@ -1,0 +1,49 @@
+name: Bug report
+description: Something does not work as it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping. Please **do not** attach private data or recordings. A short description or a synthetic example is enough. For a security problem use the **Security** tab instead.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown in the Updates page, or the name of the file you downloaded.
+      placeholder: "0.0.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How are you running it?
+      options:
+        - Windows installer (.exe)
+        - Windows portable (.zip)
+        - Linux AppImage
+        - Linux .deb
+        - From source
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "Windows 11, Ubuntu 24.04..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What did you do?
+      description: Which step of the wizard, which options, what kind of data (rows, columns), and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: What happened instead?
+      description: The message you saw, or a screenshot. Remove anything private from it.
+    validations:
+      required: true

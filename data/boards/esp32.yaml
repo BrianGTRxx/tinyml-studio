@@ -1,0 +1,293 @@
+# Espressif: datos confirmados con WebSearch restringida a dominios oficiales (official_search, 2026-10-15).
+# No se descargó ningún PDF completo (la red lo impide): cada evidencia cita lo que devolvió la búsqueda.
+# "usable" es heurística NUESTRA (40 % de la SRAM interna; flash = flash típica del módulo - 1 MB), no dato del fabricante.
+boards:
+  - id: esp32
+    name: "ESP32 (clásico)"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32"
+    cpu: "Xtensa LX6 dual-core"
+    arch: "xtensa-lx6"
+    cores: 2
+    clock_mhz: 240
+    sram_kb: 520
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: 4096
+    variants:
+      - {id: wroom-32e-n4, name: "ESP32-WROOM-32E-N4", flash_kb: 4096, psram_kb: null}
+      - {id: wroom-32e-n8, name: "ESP32-WROOM-32E-N8", flash_kb: 8192, psram_kb: null}
+      - {id: wroom-32e-n16, name: "ESP32-WROOM-32E-N16", flash_kb: 16384, psram_kb: null}
+      - {id: wroom-32e-n4r2, name: "ESP32-WROOM-32E-N4R2", flash_kb: 4096, psram_kb: 2048}
+      - {id: wroom-32e-n8r2, name: "ESP32-WROOM-32E-N8R2", flash_kb: 8192, psram_kb: 2048}
+      - {id: wroom-32e-n16r2, name: "ESP32-WROOM-32E-N16R2", flash_kb: 16384, psram_kb: 2048}
+      - {id: wrover-e-n4r8, name: "ESP32-WROVER-E-N4R8", flash_kb: 4096, psram_kb: 8192}
+      - {id: wrover-e-n8r8, name: "ESP32-WROVER-E-N8R8", flash_kb: 8192, psram_kb: 8192}
+      - {id: wrover-e-n16r8, name: "ESP32-WROVER-E-N16R8", flash_kb: 16384, psram_kb: 8192}
+      - {id: u4wdh, name: "ESP32-U4WDH (chip, flash 4 MB en paquete)", flash_kb: 4096, psram_kb: null}
+      - {id: d0wdrh2-v3, name: "ESP32-D0WDRH2-V3 (chip, PSRAM 2 MB en paquete)", flash_kb: null, psram_kb: 2048}
+    usable:
+      ram_kb: 208
+      flash_kb: 3072
+      rule: "HEURÍSTICA nuestra: 40 % de 520 KB de SRAM; flash = 4 MB (WROOM-32E-N4, el más habitual) menos 1 MB para firmware/OTA"
+    ai_tier: tflm_small
+    ai_note: "ROM 448 KB aparte. Sin unidad vectorial: TFLM con redes pequeñas (ESP-NN solo con optimizaciones genéricas). Los módulos WROVER-E traen 8 MB de PSRAM pero el chip solo mapea 4 MB al espacio de datos (el resto requiere la API himem); la PSRAM es más lenta y no sirve con la caché de flash desactivada."
+    accelerators: []
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "240 MHz", url: "https://documentation.espressif.com/esp32_datasheet_en.pdf", note: "Datasheet v5.3, p. 4 (leído): Xtensa LX6 de uno o dos núcleos; 2 núcleos a 240 MHz = 1079,96 CoreMark; la pipeline admite hasta 240 MHz (160 MHz en el S0WD, NRND)."}
+      - {field: cores, value: "2", url: "https://documentation.espressif.com/esp32_datasheet_en.pdf", note: "Datasheet v5.3, p. 11 (leído): los D0WD-V3, D0WDRH2-V3 y U4WDH son de doble núcleo (el U4WDH se fabrica de doble núcleo según PCN-2021-021); el S0WD (NRND) es de un núcleo."}
+      - {field: sram_kb, value: "520 KB", url: "https://documentation.espressif.com/esp32_datasheet_en.pdf", note: "Datasheet v5.3, p. 4 (leído): ROM 448 KB, SRAM 520 KB, SRAM en RTC 16 KB."}
+      - {field: flash_kb, value: "null (sin flash en el chip, salvo el U4WDH; la aporta el módulo)", url: "https://documentation.espressif.com/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf", note: "WROOM-32E v2.1, p. 3 (leído): N4/N8/N16 = 4/8/16 MB Quad SPI; H4/H8 (105 °C); N4R2/N8R2/N16R2 = además 2 MB de PSRAM Quad. Chip v5.3, p. 11: el U4WDH trae 4 MB de flash en paquete."}
+      - {field: psram_kb_max, value: "4096 KB (4 MiB mapeables a la vez)", url: "https://documentation.espressif.com/esp32_datasheet_en.pdf", note: "Datasheet v5.3, p. 27 (leído): admite hasta 8 MB de SRAM externa y puede mapear hasta 4 MB a la vez en el espacio de datos; hasta 16 MB de flash externa."}
+      - {field: psram_kb_max, value: "WROVER-E 8 MB", url: "https://documentation.espressif.com/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf", note: "WROVER-E v2.4, p. 3 (leído): N4R8/N8R8/N16R8 = 8 MB de PSRAM Quad; las N*R2 (2 MB) figuran EOL. DISCREPANCIA: módulo de 8 MB frente a 4 MB mapeables a la vez (el resto requiere himem)."}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32_datasheet_en.pdf"
+
+  - id: esp32-s2
+    name: "ESP32-S2"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32-S2"
+    cpu: "Xtensa LX7 single-core"
+    arch: "xtensa-lx7"
+    cores: 1
+    clock_mhz: 240
+    sram_kb: 320
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: 10752
+    variants:
+      - {id: wroom-n4, name: "ESP32-S2-WROOM-N4", flash_kb: 4096, psram_kb: null}
+      - {id: wrover-n4r2, name: "ESP32-S2-WROVER-N4R2", flash_kb: 4096, psram_kb: 2048}
+      - {id: s2fh4, name: "ESP32-S2FH4 (chip, flash 4 MB en paquete)", flash_kb: 4096, psram_kb: null}
+      - {id: s2fn4r2, name: "ESP32-S2FN4R2 (chip, flash 4 MB + PSRAM 2 MB en paquete)", flash_kb: 4096, psram_kb: 2048}
+      - {id: s2r2, name: "ESP32-S2R2 (chip, PSRAM 2 MB en paquete)", flash_kb: null, psram_kb: 2048}
+    usable:
+      ram_kb: 128
+      flash_kb: 3072
+      rule: "HEURÍSTICA nuestra: 40 % de 320 KB de SRAM; flash = 4 MB (WROOM/WROVER) menos 1 MB para firmware/OTA"
+    ai_tier: tflm_small
+    ai_note: "ROM 128 KB aparte. Un solo núcleo y sin unidad vectorial confirmada: solo redes muy pequeñas con TFLM. Los módulos WROOM/WROVER consultados figuran como fin de vida (EOL). El máximo de PSRAM (10,5 MB) es el espacio virtual que documenta ESP-IDF, no un tamaño de módulo comercial (el módulo WROVER trae 2 MB)."
+    accelerators: []
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "240 MHz", url: "https://documentation.espressif.com/esp32-s2_datasheet_en.pdf", note: "Datasheet v1.9, p. 3 (leído): LX7 de un núcleo de 32 bits, 'up to 240 MHz'; 542,80 CoreMark a 240 MHz."}
+      - {field: cores, value: "1", url: "https://documentation.espressif.com/esp32-s2_datasheet_en.pdf", note: "Datasheet v1.9, p. 3 (leído): Xtensa single-core 32-bit LX7."}
+      - {field: sram_kb, value: "320 KB", url: "https://documentation.espressif.com/esp32-s2_datasheet_en.pdf", note: "Datasheet v1.9, p. 3 (leído): ROM 128 KB, SRAM 320 KB, SRAM en RTC 16 KB."}
+      - {field: flash_kb, value: "null (variantes con flash en paquete o en módulo)", url: "https://documentation.espressif.com/esp32-s2_datasheet_en.pdf", note: "Chip v1.9, p. 11, tabla 1-1 (leído): S2FH4 = 4 MB y S2FH2 (EOL) = 2 MB de flash en paquete; S2FN4R2 = 4 MB + 2 MB PSRAM; S2R2 = 2 MB PSRAM. Módulos (ambos EOL): WROOM v1.5 = 4 MB de flash; WROVER v1.4 = 4 MB + 2 MB PSRAM."}
+      - {field: psram_kb_max, value: "10,5 MB = 10752 KB (espacio virtual)", url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s2/api-guides/external-ram.html", note: "Guía ESP-IDF v6.1 para ESP32-S2 (NO es del datasheet): puede usar hasta 10,5 MB de direcciones virtuales para PSRAM externa. El datasheet v1.9 solo lista PSRAM en paquete de 2 MB y no declara un límite de dispositivo."}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32-s2_datasheet_en.pdf"
+
+  - id: esp32-s3
+    name: "ESP32-S3"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32-S3"
+    cpu: "Xtensa LX7 dual-core"
+    arch: "xtensa-lx7"
+    cores: 2
+    clock_mhz: 240
+    sram_kb: 512
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: 32768
+    priority: 1
+    variants:
+      - {id: wroom-1-n4, name: "ESP32-S3-WROOM-1-N4", flash_kb: 4096, psram_kb: null}
+      - {id: wroom-1-n8, name: "ESP32-S3-WROOM-1-N8", flash_kb: 8192, psram_kb: null}
+      - {id: wroom-1-n16, name: "ESP32-S3-WROOM-1-N16", flash_kb: 16384, psram_kb: null}
+      - {id: wroom-1-n4r8, name: "ESP32-S3-WROOM-1-N4R8", flash_kb: 4096, psram_kb: 8192}
+      - {id: wroom-1-n8r8, name: "ESP32-S3-WROOM-1-N8R8", flash_kb: 8192, psram_kb: 8192}
+      - {id: wroom-1-n16r8, name: "ESP32-S3-WROOM-1-N16R8", flash_kb: 16384, psram_kb: 8192}
+      - {id: wroom-1-n4r2, name: "ESP32-S3-WROOM-1-N4R2", flash_kb: 4096, psram_kb: 2048}
+      - {id: wroom-1-n8r2, name: "ESP32-S3-WROOM-1-N8R2", flash_kb: 8192, psram_kb: 2048}
+      - {id: wroom-1-n16r2, name: "ESP32-S3-WROOM-1-N16R2", flash_kb: 16384, psram_kb: 2048}
+      - {id: wroom-1-n16r16va, name: "ESP32-S3-WROOM-1-N16R16VA", flash_kb: 16384, psram_kb: 16384}
+      - {id: s3fn8, name: "ESP32-S3FN8 (chip, flash en paquete)", flash_kb: 8192, psram_kb: null}
+      - {id: s3r8, name: "ESP32-S3R8 (chip, PSRAM en paquete)", flash_kb: null, psram_kb: 8192}
+      - {id: s3fh4r2, name: "ESP32-S3FH4R2 (chip, flash 4 MB + PSRAM 2 MB en paquete)", flash_kb: 4096, psram_kb: 2048}
+      - {id: s3rh2, name: "ESP32-S3RH2 (chip, PSRAM 2 MB en paquete)", flash_kb: null, psram_kb: 2048}
+      - {id: s3r16v, name: "ESP32-S3R16V (chip, PSRAM 16 MB en paquete, 1,8 V)", flash_kb: null, psram_kb: 16384}
+    usable:
+      ram_kb: 204
+      flash_kb: 7168
+      rule: "HEURÍSTICA nuestra: 40 % de 512 KB de SRAM; flash = 8 MB (N8R8, la combinación más común en placas) menos 1 MB para firmware/OTA"
+    ai_tier: tflm_medium
+    ai_note: "ROM 384 KB aparte (más 16 KB SRAM RTC). Instrucciones vectoriales para redes neuronales; ESP-NN trae ensamblador optimizado para S3 (3-10x más rápido que sin la librería, según el registro de componentes). PSRAM: el chip admite hasta 1 GB de flash/RAM externa a nivel de dispositivo pero solo 32 MB de direcciones virtuales a la vez (se usa 32 MB como máximo del chip); el mayor módulo/paquete documentado es de 16 MB (WROOM-1 N16R16VA, chip S3R16V). Los módulos WROOM-1 N*R8 con PSRAM octal figuran con -40 a 65 °C. N4R2 = 4 MB de flash + 2 MB de PSRAM Quad (confirmado en el datasheet del módulo v1.8)."
+    accelerators: ["instrucciones vectoriales del LX7", "ESP-NN (ensamblador optimizado para S3)"]
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "240 MHz", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", note: "Datasheet v2.2, p. 3 (leído): Xtensa LX7 dual-core de 32 bits, 'up to 240 MHz'; 1329,92 CoreMark a 240 MHz."}
+      - {field: cores, value: "2", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", note: "Datasheet v2.2, p. 1 (leído): Xtensa 32-bit LX7 dual-core."}
+      - {field: sram_kb, value: "512 KB", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", note: "Datasheet v2.2, p. 4 (leído): ROM 384 KB, SRAM 512 KB, SRAM en RTC 16 KB (8 KB FAST + 8 KB SLOW, p. 38)."}
+      - {field: flash_kb, value: "null (flash externa/en paquete según variante)", url: "https://documentation.espressif.com/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf", note: "Datasheet WROOM-1 v1.8, p. 3, tabla 1-1 (leído): N4/N8/N16 = 4/8/16 MB Quad SPI; N*R2 = + 2 MB PSRAM Quad; N*R8 = + 8 MB PSRAM Octal; N16R16VA = 16 MB + 16 MB PSRAM Octal."}
+      - {field: psram_kb_max, value: "32 MB mapeables (1 GB a nivel dispositivo)", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", note: "Datasheet v2.2, p. 39 (leído): admite hasta 1 GB de flash y RAM externas; flash/RAM externa mapeada en espacio de instrucciones de 32 MB y RAM externa en espacio de datos de 32 MB."}
+      - {field: psram_kb_max, value: "16 MB máximo en módulo/paquete", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", note: "Datasheet v2.2, p. 13, tabla 1-1 (leído): ESP32-S3R16V = 16 MB PSRAM Octal en paquete (1,8 V); S3R8 = 8 MB; S3RH2 = 2 MB; S3FH4R2 = 4 MB flash + 2 MB PSRAM; S3FN8 = 8 MB flash. S3R8V y S3R2 figuran EOL. DISCREPANCIA: chip 1 GB / 32 MB mapeados vs 16 MB como mayor PSRAM en paquete."}
+      - {field: vector_instructions, value: "128 bits", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", note: "Datasheet v2.2, p. 36 (leído): extensión de instrucciones para algoritmos de IA y DSP: registros de 128 bits y operaciones vectoriales de 128 bits."}
+      - {field: esp_nn, value: "ensamblador vectorial para S3", url: "https://components.espressif.com/components/espressif/esp-nn", note: "ESP32-S3: versiones en ensamblador que aprovechan las instrucciones vectoriales; ESP32 y C3: optimizaciones genéricas. (Registro de componentes; no es del datasheet.)"}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf"
+
+  - id: esp32-c3
+    name: "ESP32-C3"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32-C3"
+    cpu: "RISC-V RV32IMC single-core"
+    arch: "riscv32"
+    cores: 1
+    clock_mhz: 160
+    sram_kb: 400
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: null
+    variants:
+      - {id: mini-1-n4x, name: "ESP32-C3-MINI-1-N4X", flash_kb: 4096, psram_kb: null}
+      - {id: mini-1-h4x, name: "ESP32-C3-MINI-1-H4X", flash_kb: 4096, psram_kb: null}
+      - {id: mini-1-h8x, name: "ESP32-C3-MINI-1-H8X", flash_kb: 8192, psram_kb: null}
+      - {id: wroom-02-n4, name: "ESP32-C3-WROOM-02-N4", flash_kb: 4096, psram_kb: null}
+      - {id: wroom-02-n8, name: "ESP32-C3-WROOM-02-N8", flash_kb: 8192, psram_kb: null}
+      - {id: c3fh4x, name: "ESP32-C3FH4X (chip, flash 4 MB en paquete)", flash_kb: 4096, psram_kb: null}
+      - {id: c3fh8x, name: "ESP32-C3FH8X (chip, flash 8 MB en paquete)", flash_kb: 8192, psram_kb: null}
+    usable:
+      ram_kb: 160
+      flash_kb: 3072
+      rule: "HEURÍSTICA nuestra: 40 % de 400 KB de SRAM; flash = 4 MB (MINI-1 / WROOM-02-N4) menos 1 MB para firmware/OTA"
+    ai_tier: tflm_small
+    ai_note: "ROM 384 KB aparte; 16 KB de los 400 KB de SRAM se configuran como caché. Sin unidad vectorial (ESP-NN solo con optimizaciones genéricas): redes muy pequeñas. Sin PSRAM documentada en lo consultado (null = no confirmado)."
+    accelerators: []
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "160 MHz", url: "https://documentation.espressif.com/esp32-c3_datasheet_en.pdf", note: "Datasheet v2.4, p. 3 (leído): RISC-V de 32 bits de un núcleo, 'up to 160 MHz'."}
+      - {field: cores, value: "1", url: "https://documentation.espressif.com/esp32-c3_datasheet_en.pdf", note: "Datasheet v2.4, p. 3 (leído): 32-bit RISC-V single-core processor."}
+      - {field: sram_kb, value: "400 KB", url: "https://documentation.espressif.com/esp32-c3_datasheet_en.pdf", note: "Datasheet v2.4, p. 4 (leído): ROM 384 KB, SRAM 400 KB (16 KB para caché), SRAM en RTC 8 KB."}
+      - {field: flash_kb, value: "null (flash en paquete FH4/FH8X o externa según módulo)", url: "https://documentation.espressif.com/esp32-c3-mini-1_datasheet_en.pdf", note: "Chip v2.4, p. 12, tabla 1-1 (leído): C3FH4/FH4X = 4 MB y C3FH8X = 8 MB de flash en paquete (C3FN4 EOL; el chip admite hasta 16 MB de flash externa, p. 35). MINI-1 v2.2, p. 3: N4X/H4X = 4 MB, H8X = 8 MB. WROOM-02 v1.7, p. 3: N4/N8 = 4/8 MB de flash SPI externa. Ninguna hoja lista PSRAM."}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32-c3_datasheet_en.pdf"
+
+  - id: esp32-c6
+    name: "ESP32-C6"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32-C6"
+    cpu: "RISC-V RV32IMAC HP single-core (+ núcleo LP)"
+    arch: "riscv32"
+    cores: 1
+    clock_mhz: 160
+    sram_kb: 512
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: null
+    variants:
+      - {id: wroom-1-n4, name: "ESP32-C6-WROOM-1-N4", flash_kb: 4096, psram_kb: null}
+      - {id: wroom-1-n8, name: "ESP32-C6-WROOM-1-N8", flash_kb: 8192, psram_kb: null}
+      - {id: wroom-1-n16, name: "ESP32-C6-WROOM-1-N16", flash_kb: 16384, psram_kb: null}
+      - {id: c6fh4, name: "ESP32-C6FH4 (chip, flash 4 MB en paquete)", flash_kb: 4096, psram_kb: null}
+      - {id: c6fh8, name: "ESP32-C6FH8 (chip, flash 8 MB en paquete)", flash_kb: 8192, psram_kb: null}
+    usable:
+      ram_kb: 204
+      flash_kb: 3072
+      rule: "HEURÍSTICA nuestra: 40 % de 512 KB de SRAM HP; flash = 4 MB (WROOM-1-N4) menos 1 MB para firmware/OTA"
+    ai_tier: tflm_small
+    ai_note: "ROM 320 KB aparte; SRAM HP 512 KB + 16 KB SRAM de bajo consumo. Un núcleo HP de 160 MHz (más un núcleo LP de hasta 20 MHz) sin unidad vectorial confirmada: redes pequeñas. Los módulos WROOM-1 no llevan PSRAM (null)."
+    accelerators: []
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "160 MHz", url: "https://documentation.espressif.com/esp32-c6_datasheet_en.pdf", note: "Datasheet v1.5, p. 3 (leído): procesador HP RISC-V de 4 etapas, 'up to 160 MHz'; 496,66 CoreMark (3,10 CoreMark/MHz)."}
+      - {field: cores, value: "1", url: "https://documentation.espressif.com/esp32-c6_datasheet_en.pdf", note: "Datasheet v1.5, p. 3-4 (leído): un procesador HP y uno LP (2 etapas, hasta 20 MHz); se cuenta solo el HP."}
+      - {field: sram_kb, value: "512 KB", url: "https://documentation.espressif.com/esp32-c6_datasheet_en.pdf", note: "Datasheet v1.5, p. 4 (leído): ROM 320 KB, SRAM HP 512 KB, SRAM LP 16 KB; caché L1 de 32 KB."}
+      - {field: flash_kb, value: "null (flash en paquete FH4/FH8 o en el módulo)", url: "https://documentation.espressif.com/esp32-c6-wroom-1_wroom-1u_datasheet_en.pdf", note: "Chip v1.5, p. 13, tabla 1-1 (leído): C6FH4 = 4 MB y C6FH8 = 8 MB Quad SPI en paquete; flash externa hasta 16 MB (p. 40). WROOM-1 v1.4, p. 4: N4/N8/N16 = 4/8/16 MB. Ninguna hoja lista PSRAM."}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32-c6_datasheet_en.pdf"
+
+  - id: esp32-c5
+    name: "ESP32-C5"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32-C5"
+    cpu: "RISC-V HP single-core (+ núcleo LP)"
+    arch: "riscv32"
+    cores: 1
+    clock_mhz: 240
+    sram_kb: 384
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: 32768
+    variants:
+      - {id: wroom-1-n4, name: "ESP32-C5-WROOM-1-N4", flash_kb: 4096, psram_kb: null}
+      - {id: wroom-1-n4r2, name: "ESP32-C5-WROOM-1-N4R2", flash_kb: 4096, psram_kb: 2048}
+      - {id: wroom-1-n8r2, name: "ESP32-C5-WROOM-1-N8R2", flash_kb: 8192, psram_kb: 2048}
+      - {id: wroom-1-n16r2, name: "ESP32-C5-WROOM-1-N16R2", flash_kb: 16384, psram_kb: 2048}
+      - {id: wroom-1-n8r8, name: "ESP32-C5-WROOM-1-N8R8", flash_kb: 8192, psram_kb: 8192}
+      - {id: wroom-1-n16r8, name: "ESP32-C5-WROOM-1-N16R8", flash_kb: 16384, psram_kb: 8192}
+      - {id: wroom-1-n32r8, name: "ESP32-C5-WROOM-1-N32R8", flash_kb: 32768, psram_kb: 8192}
+      - {id: c5hf4, name: "ESP32-C5HF4 (chip, flash 4 MB en paquete)", flash_kb: 4096, psram_kb: null}
+      - {id: c5hr2, name: "ESP32-C5HR2 (chip, PSRAM 2 MB en paquete)", flash_kb: null, psram_kb: 2048}
+      - {id: c5hr8, name: "ESP32-C5HR8 (chip, PSRAM 8 MB en paquete)", flash_kb: null, psram_kb: 8192}
+    usable:
+      ram_kb: 153
+      flash_kb: 3072
+      rule: "HEURÍSTICA nuestra: 40 % de 384 KB de SRAM HP; flash = 4 MB (WROOM-1-N4) menos 1 MB para firmware/OTA"
+    ai_tier: tflm_small
+    ai_note: "ROM 320 KB aparte; 16 KB SRAM LP. Sin unidad vectorial confirmada: redes pequeñas. DISCREPANCIA: el anuncio de lanzamiento de 2022 decía 400 KB de SRAM; el datasheet v1.5 dice 384 KB (se usa el datasheet). PSRAM: 2 MB (C5HR2) u 8 MB (C5HR8) en paquete, y módulos WROOM-1 con 2 MB (N4R2, N8R2, N16R2) u 8 MB (N8R8, N16R8, N32R8); el chip mapea como máximo 32 MB de flash o PSRAM externas. La variante C5NF8R2LA (8 MB de flash + 2 MB de PSRAM) figura sin producción en masa en el datasheet."
+    accelerators: []
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "240 MHz", url: "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf", note: "Datasheet v1.5, p. 4 (leído): procesador HP RISC-V de 5 etapas, 'up to 240 MHz' (820,19 CoreMark); procesador LP hasta 48 MHz."}
+      - {field: cores, value: "1", url: "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf", note: "Datasheet v1.5, p. 4 (leído): un procesador HP y uno LP; se cuenta solo el HP."}
+      - {field: sram_kb, value: "384 KB", url: "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf", note: "Datasheet v1.5, p. 4 (leído): ROM 320 KB, SRAM HP 384 KB, SRAM LP 16 KB."}
+      - {field: flash_kb, value: "null (flash en paquete C5HF4 o en el módulo)", url: "https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.pdf", note: "Chip v1.5, p. 14, tabla 1-1 (leído): C5HF4 = 4 MB de flash en paquete; C5HR2 = 2 MB y C5HR8 = 8 MB de PSRAM; C5NF8R2LA = 8 MB + 2 MB. WROOM-1 v1.3, p. 4: N4, N4R2, N8R2, N16R2, N8R8, N16R8, N32R8."}
+      - {field: psram_kb_max, value: "32 MB (máximo mapeable de flash o PSRAM externas)", url: "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf", note: "Datasheet v1.5, p. 41 (leído): el tamaño de la flash o PSRAM externa puede ser de 32 MB como máximo. En paquete: 2 MB (C5HR2) u 8 MB (C5HR8)."}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+
+  - id: esp32-p4
+    name: "ESP32-P4"
+    vendor: Espressif
+    family: ESP32
+    soc: "ESP32-P4"
+    cpu: "RISC-V dual-core HP (+ núcleo LP)"
+    arch: "riscv32"
+    cores: 2
+    clock_mhz: 400
+    sram_kb: 768
+    ram_kb: null
+    flash_kb: null
+    psram_kb_max: 65536
+    variants:
+      - {id: p4-nrw16x, name: "ESP32-P4NRW16X (PSRAM 16 MB en paquete)", flash_kb: null, psram_kb: 16384}
+      - {id: p4-nrw32x, name: "ESP32-P4NRW32X (PSRAM 32 MB en paquete)", flash_kb: null, psram_kb: 32768}
+    usable:
+      ram_kb: 307
+      flash_kb: null
+      rule: "HEURÍSTICA nuestra: 40 % de 768 KB de L2MEM; flash no definida: el chip no trae flash y depende de la placa"
+    ai_tier: tflm_medium
+    ai_note: "Sin flash en el chip (la aporta la placa: el chip exige flash externa, hasta 64 MB). Extensión de IA y DSP (XespV: 8 registros nuevos de 128 bits y operaciones vectoriales de 128 bits) y bucles por hardware (XespLoop) en la CPU HP, según el datasheet; no se confirmó que ESP-NN/TFLM ya las aproveche, así que el nivel medio se basa en 768 KB de L2MEM + PSRAM y 400 MHz. Frecuencia: el datasheet publicado hoy (pre-lanzamiento v0.7) da 400 MHz, y la guía de la revisión v3.x (v1.1) dice que esa revisión sube el máximo de 360 a 400 MHz; un datasheet v1.2 con 360 MHz por defecto, citado por una búsqueda anterior, no se pudo localizar. PSRAM: 16 MB (NRW16X) o 32 MB (NRW32X) en paquete; el controlador admite hasta 64 MB."
+    accelerators: ["extensión RISC-V de IA/DSP (XespV)", "bucles por hardware (XespLoop)"]
+    runtimes: ["TFLM", "código C (clásicos)"]
+    evidence:
+      - {field: clock_mhz, value: "400 MHz", url: "https://documentation.espressif.com/esp32-p4-chip-revision-v3.x_user_guide_en.pdf", note: "Guía de la revisión v3.x v1.1, p. 5 (leído): sube la frecuencia máxima de la CPU HP de 360 a 400 MHz. Datasheet pre-lanzamiento v0.7, p. 3 (leído): 'up to 400 MHz'."}
+      - {field: cores, value: "2", url: "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf", note: "Datasheet pre-lanzamiento v0.7, p. 3 (leído): RISC-V de 32 bits de doble núcleo para el sistema HP, más un núcleo LP de hasta 40 MHz."}
+      - {field: sram_kb, value: "768 KB", url: "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf", note: "Datasheet pre-lanzamiento v0.7, p. 3 (leído): 768 KB de HP L2MEM, ROM HP 128 KB, SPM de sistema 8 KB, LP SRAM 32 KB."}
+      - {field: flash_kb, value: "null (sin flash en el chip)", url: "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf", note: "Datasheet pre-lanzamiento v0.7, p. 35 (leído): requiere flash externa para el firmware y los datos (hasta 64 MB). Las NRW16X/NRW32X solo integran PSRAM."}
+      - {field: psram_kb_max, value: "64 MB (controlador); 16/32 MB en paquete", url: "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf", note: "Datasheet pre-lanzamiento v0.7, p. 11 y 46 (leído): el controlador admite hasta 64 MB; en paquete 16 MB (NRW16X) o 32 MB (NRW32X), OPI/HPI a 1,8 V."}
+      - {field: ai_extension, value: "XespV / XespLoop", url: "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf", note: "Datasheet pre-lanzamiento v0.7, p. 3 y 40 (leído): extensión de IA y DSP (XespV) e instrucciones de bucle por hardware (XespLoop)."}
+    verified: true
+    verification: datasheet_read
+    retrieved: "2026-10-28"
+    source: "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf"

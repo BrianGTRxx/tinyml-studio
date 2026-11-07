@@ -1,0 +1,81 @@
+# SEMILLA de la base de placas. verified: false => el agente DEBE contrastar cada dato con
+# documentación oficial (Espressif, Raspberry Pi, ST) antes de usarlo, y registrar la fuente.
+# Los valores son órdenes de magnitud de memoria; muchos dependen del módulo/variante concreta.
+boards:
+  - id: esp32-s3
+    vendor: Espressif
+    priority: 1                # placa principal de pruebas del autor
+    cpu: "Xtensa LX7 dual-core, hasta 240 MHz"
+    sram_kb: 512
+    psram: "opcional (según módulo, hasta 8 MB octal)"
+    flash: "según módulo (4/8/16 MB típico)"
+    accel: "instrucciones vectoriales (ESP-NN para TFLM)"
+    runtime: ["TFLM", "ESP-DL", "código C (clásicos)"]
+    verified: false
+    source: ""
+  - id: esp32-c3
+    vendor: Espressif
+    cpu: "RISC-V single-core, hasta 160 MHz"
+    sram_kb: 400
+    psram: "no"
+    flash: "según módulo (4 MB típico)"
+    accel: "ninguna específica"
+    runtime: ["TFLM", "código C (clásicos)"]
+    verified: false
+    source: ""
+  - id: esp32-c5
+    vendor: Espressif
+    cpu: "RISC-V, hasta 240 MHz"
+    sram_kb: null              # VERIFICAR
+    psram: null                # VERIFICAR
+    flash: null
+    accel: null
+    runtime: ["TFLM", "código C (clásicos)"]
+    verified: false
+    source: ""
+  - id: rpi-5
+    vendor: Raspberry Pi
+    cpu: "4x Cortex-A76 hasta 2.4 GHz"
+    ram_mb: "2/4/8/16 según versión"
+    runtime: ["LiteRT/tflite-runtime", "ONNX Runtime"]
+    verified: false
+    source: ""
+  - id: rpi-zero-2w
+    vendor: Raspberry Pi
+    cpu: "4x Cortex-A53 hasta 1 GHz"
+    ram_mb: 512
+    runtime: ["LiteRT/tflite-runtime", "ONNX Runtime"]
+    verified: false
+    source: ""
+  - id: rpi-zero
+    vendor: Raspberry Pi
+    cpu: "ARM11 1 GHz (Zero / Zero W)"
+    ram_mb: 512
+    runtime: ["tflite-runtime (si hay wheel)", "código C (clásicos)"]
+    verified: false
+    source: ""
+  # STM32: es una familia enorme; modelar por SERIE y por chip concreto (el usuario escoge MCU)
+  - id: stm32f411
+    vendor: ST
+    cpu: "Cortex-M4F 100 MHz"
+    sram_kb: 128
+    flash_kb: 512
+    runtime: ["X-CUBE-AI", "TFLM", "código C (clásicos)"]
+    verified: false
+    source: ""
+  - id: stm32l476
+    vendor: ST
+    cpu: "Cortex-M4F 80 MHz"
+    sram_kb: 128
+    flash_kb: 1024
+    runtime: ["X-CUBE-AI", "TFLM", "código C (clásicos)"]
+    verified: false
+    source: ""
+  - id: stm32h743
+    vendor: ST
+    cpu: "Cortex-M7 480 MHz"
+    sram_kb: 1024
+    flash_kb: 2048
+    runtime: ["X-CUBE-AI", "TFLM", "código C (clásicos)"]
+    verified: false
+    source: ""

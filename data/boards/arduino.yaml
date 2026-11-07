@@ -1,0 +1,565 @@
+# Placas Arduino. Datasheets oficiales de docs.arduino.cc leídos (ver evidencias, documento y página). Nicla Vision: la memoria del STM32H747 no figura en su datasheet (viene de ST, no leído).
+boards:
+- id: arduino-uno-r3
+  name: Arduino UNO R3
+  vendor: Arduino
+  family: Arduino
+  soc: ATmega328P
+  cpu: AVR 8 bits
+  cores: null
+  clock_mhz: 16
+  arch: avr
+  fpu: false
+  sram_kb: 2
+  flash_kb: 32
+  usable:
+    ram_kb: 0.8
+    flash_kb: 24
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 0,5 KB de bootloader +
+      ~8 KB de runtime/sketch'
+  ai_tier: classical_only
+  ai_note: '2 KB de SRAM y 32 KB de flash en un AVR de 8 bits sin FPU. TFLM NO cabe ni funciona: exige 32 bits, un arena de
+    tensores de varios KB y decenas de KB de flash solo para el intérprete. Solo caben árboles de decisión muy pequeños o
+    modelos lineales/umbrales en C (enteros, sin float eficiente), con muy pocas características. Discrepancia: el manual
+    de usuario dice ''hasta 20 MHz'' (límite del chip); la placa usa un resonador de 16 MHz.'
+  accelerators: []
+  runtimes:
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 16 MHz
+    url: https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
+    note: 'Datasheet A000066 (modificado 21/10/2026), p. 2 y 6 (leído): ''AVR CPU at up to 16 MHz''; el procesador ATmega328P
+      ''running at up to 20 MHz'' (límite del chip); la placa usa 16 MHz.'
+  - field: sram_kb
+    value: 2 KB
+    url: https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
+    note: 'Datasheet A000066 (modificado 21/10/2026), p. 2 (leído): 2 kB de SRAM.'
+  - field: flash_kb
+    value: 32 KB
+    url: https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
+    note: 'Datasheet A000066 (modificado 21/10/2026), p. 2 (leído): 32 kB de flash (los 0,5 KB del bootloader salen de la
+      tienda de Arduino, no del datasheet).'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
+- id: arduino-mega-2560
+  name: Arduino Mega 2560 Rev3
+  vendor: Arduino
+  family: Arduino
+  soc: ATmega2560
+  cpu: AVR 8 bits
+  clock_mhz: 16
+  arch: avr
+  fpu: false
+  sram_kb: 8
+  flash_kb: 256
+  usable:
+    ram_kb: 3
+    flash_kb: 232
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 8 KB de bootloader (dato
+      oficial) + ~16 KB de runtime/sketch'
+  ai_tier: classical_only
+  ai_note: '8 KB de SRAM y 256 KB de flash en AVR de 8 bits: más holgada que la UNO R3 pero TFLM sigue sin ser viable (no
+    hay port para AVR de 8 bits y 8 KB de RAM no alcanzan para arena + intérprete). Sirven árboles/bosques pequeños y modelos
+    lineales en C.'
+  accelerators: []
+  runtimes:
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 16 MHz
+    url: https://docs.arduino.cc/resources/datasheets/A000067-datasheet.pdf
+    note: 'Datasheet A000067 (modificado 21/10/2026), p. 1 (leído): ''operates at a frequency of 16 MHz''.'
+  - field: sram_kb
+    value: 8 KB
+    url: https://docs.arduino.cc/resources/datasheets/A000067-datasheet.pdf
+    note: 'Datasheet A000067 (modificado 21/10/2026), p. 2 (leído): ''8k bytes Internal SRAM''.'
+  - field: flash_kb
+    value: 256 KB
+    url: https://docs.arduino.cc/resources/datasheets/A000067-datasheet.pdf
+    note: 'Datasheet A000067 (modificado 21/10/2026), p. 2 (leído): ''256k bytes (of which 8k is used for the bootloader)''.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/A000067-datasheet.pdf
+- id: arduino-uno-r4-minima
+  name: Arduino UNO R4 Minima
+  vendor: Arduino
+  family: Arduino
+  soc: Renesas RA4M1 (R7FA4M1AB3CFM)
+  cpu: Arm Cortex-M4F
+  clock_mhz: 48
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 32
+  flash_kb: 256
+  usable:
+    ram_kb: 13
+    flash_kb: 224
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 32 KB'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4F a 48 MHz con 32 KB de SRAM y 256 KB de flash: redes diminutas (decenas de KB) o clásicos en C; el arena
+    de TFLM compite con el resto del sketch. Memoria de datos extra de 8 KB (EEPROM) no cuenta.'
+  accelerators:
+  - FPU precisión simple
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 48 MHz
+    url: https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+    note: 'Datasheet ABX00080 (modificado 21/10/2026), p. 1-2 (leído): Renesas RA4M1 a 48 MHz, Arm Cortex-M4 con FPU.'
+  - field: sram_kb
+    value: 32 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+    note: 'Datasheet ABX00080 (modificado 21/10/2026), p. 2 (leído): 32 kB de SRAM y 8 kB de memoria de datos (EEPROM).'
+  - field: flash_kb
+    value: 256 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+    note: 'Datasheet ABX00080 (modificado 21/10/2026), p. 2 (leído): 256 kB de flash.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+- id: arduino-uno-r4-wifi
+  name: Arduino UNO R4 WiFi
+  vendor: Arduino
+  family: Arduino
+  soc: Renesas RA4M1 (R7FA4M1AB3CFM)
+  cpu: Arm Cortex-M4F
+  clock_mhz: 48
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 32
+  flash_kb: 256
+  usable:
+    ram_kb: 13
+    flash_kb: 224
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 32 KB'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4F a 48 MHz con 32 KB de SRAM y 256 KB de flash: redes diminutas (decenas de KB) o clásicos en C; el arena
+    de TFLM compite con el resto del sketch. El ESP32-S3 de la placa es solo coprocesador Wi-Fi/BLE (384 KB ROM, 512 KB SRAM)
+    y no se programa para ML en el flujo normal.'
+  accelerators:
+  - FPU precisión simple
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 48 MHz
+    url: https://docs.arduino.cc/resources/datasheets/ABX00087-datasheet.pdf
+    note: 'Datasheet ABX00087 (modificado 21/10/2026), p. 1-2 (leído): Renesas RA4M1 a 48 MHz, Arm Cortex-M4 con FPU; el módulo
+      ESP32-S3-MINI-1-N8 es el MCU secundario para Wi-Fi/Bluetooth.'
+  - field: sram_kb
+    value: 32 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00087-datasheet.pdf
+    note: 'Datasheet ABX00087 (modificado 21/10/2026), p. 2 (leído): 32 kB de SRAM y 8 kB de memoria de datos (EEPROM).'
+  - field: flash_kb
+    value: 256 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00087-datasheet.pdf
+    note: 'Datasheet ABX00087 (modificado 21/10/2026), p. 2 (leído): 256 kB de flash.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00087-datasheet.pdf
+- id: arduino-nano-33-ble
+  name: Arduino Nano 33 BLE
+  vendor: Arduino
+  family: Arduino
+  soc: Nordic nRF52840
+  cpu: Arm Cortex-M4F
+  clock_mhz: 64
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 256
+  flash_kb: 1024
+  usable:
+    ram_kb: 102
+    flash_kb: 960
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 64 KB'
+  ai_tier: tflm_small
+  ai_note: 'Cortex-M4F a 64 MHz, 256 KB de SRAM y 1 MB de flash: plataforma clásica de TinyML con TFLM (redes pequeñas/medianas
+    int8). Sin acelerador NN. Arduino la marca como fin de vida; el sucesor Rev2 usa el mismo nRF52840.'
+  accelerators:
+  - FPU precisión simple
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: clock_mhz
+    value: 64 MHz
+    url: https://docs.arduino.cc/resources/datasheets/ABX00030-datasheet.pdf
+    note: 'Datasheet ABX00030 (modificado 21/10/2026), p. 2 y 6 (leído): ''64 MHz Arm Cortex-M4F (with FPU)''; ''running at
+      up to 64MHz''.'
+  - field: sram_kb
+    value: 256 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00030-datasheet.pdf
+    note: 'Datasheet ABX00030 (modificado 21/10/2026), p. 2 (leído): ''1 MB Flash + 256 kB RAM'' (nRF52840).'
+  - field: flash_kb
+    value: 1024 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00030-datasheet.pdf
+    note: 'Datasheet ABX00030 (modificado 21/10/2026), p. 2 (leído): ''1 MB Flash + 256 kB RAM'' (nRF52840).'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00030-datasheet.pdf
+- id: arduino-nano-esp32
+  name: Arduino Nano ESP32
+  vendor: Arduino
+  family: Arduino
+  soc: u-blox NORA-W106 (ESP32-S3)
+  cpu: Xtensa LX7 dual-core
+  cores: 2
+  clock_mhz: 240
+  arch: xtensa-lx7
+  sram_kb: 512
+  flash_kb: null
+  psram_kb_max: 8192
+  variants:
+  - id: std
+    name: Nano ESP32
+    flash_kb: 16384
+    psram_kb: 8192
+  usable:
+    ram_kb: 205
+    flash_kb: 4096
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 25 % de los 16 MB de flash
+      externa para modelo+firmware; la flash no está dentro del chip'
+  ai_tier: tflm_medium
+  ai_note: 'Mismo núcleo que ESP32-S3: 512 KB de SRAM, 8 MB de PSRAM en el módulo y 16 MB de flash QSPI externa en la placa.
+    Redes int8 medianas con TFLM (+ESP-NN). Evidencia propia de arduino.cc; la flash es externa, por eso flash_kb es null
+    y va en variants.'
+  accelerators:
+  - vectoriales (ESP-NN)
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: dual-core
+    url: https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf
+    note: 'Datasheet ABX00083 (modificado 21/10/2026), p. 2 (leído): ''Xtensa Dual-core 32-bit LX7 Microprocessor'' (ESP32-S3).'
+  - field: clock_mhz
+    value: 240 MHz
+    url: https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf
+    note: 'Datasheet ABX00083 (modificado 21/10/2026), p. 2 y 5 (leído): ''Up to 240 MHz''.'
+  - field: sram_kb
+    value: 512 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf
+    note: 'Datasheet ABX00083 (modificado 21/10/2026), p. 2 (leído): 384 kB de ROM, 512 kB de SRAM y 16 kB de SRAM en RTC
+      (8 kB RTC FAST + 8 kB RTC SLOW según p. 8).'
+  - field: psram_kb_max
+    value: 8 MB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf
+    note: 'Datasheet ABX00083 (modificado 21/10/2026), p. 9 (leído): ''The NORA-W106-10B module includes 8 MB of embedded
+      PSRAM (Octal SPI)''.'
+  - field: variants.flash_kb
+    value: 16 MB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf
+    note: 'Datasheet ABX00083 (modificado 21/10/2026), p. 7 (leído): U3 GD25B128EWIGR, 128 Mbit (16 MB) de flash externa.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf
+- id: arduino-nano-rp2040-connect
+  name: Arduino Nano RP2040 Connect
+  vendor: Arduino
+  family: Arduino
+  soc: Raspberry Pi RP2040
+  cpu: Arm Cortex-M0+ dual-core
+  cores: 2
+  clock_mhz: 133
+  arch: armv6-m
+  fpu: false
+  sram_kb: 264
+  flash_kb: null
+  variants:
+  - id: std
+    name: Nano RP2040 Connect
+    flash_kb: 16384
+  usable:
+    ram_kb: 105
+    flash_kb: 4096
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 25 % de los 16 MB de flash
+      QSPI externa'
+  ai_tier: tflm_small
+  ai_note: 'Dos Cortex-M0+ a 133 MHz sin FPU ni DSP: la inferencia float es lenta; usa int8. 264 KB de SRAM en el chip y 16
+    MB de flash QSPI externa. Arduino la marca como fin de vida.'
+  accelerators: []
+  runtimes:
+  - TFLM
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: dual-core
+    url: https://docs.arduino.cc/resources/datasheets/ABX00053-datasheet.pdf
+    note: 'Datasheet ABX00053 (modificado 21/10/2026), p. 2 (leído): ''133 MHz 32bit Dual Core Arm Cortex-M0+''.'
+  - field: clock_mhz
+    value: 133 MHz
+    url: https://docs.arduino.cc/resources/datasheets/ABX00053-datasheet.pdf
+    note: 'Datasheet ABX00053 (modificado 21/10/2026), p. 2 (leído): ''133 MHz''.'
+  - field: sram_kb
+    value: 264 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00053-datasheet.pdf
+    note: 'Datasheet ABX00053 (modificado 21/10/2026), p. 2 (leído): ''264 kB on-chip SRAM''; soporte de hasta 16 MB de flash
+      fuera del chip por QSPI.'
+  - field: variants.flash_kb
+    value: 16 MB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00053-datasheet.pdf
+    note: 'Datasheet ABX00053 (modificado 21/10/2026), p. 2 y 9 (leído): U5 AT25SF128A, 16 MB de flash NOR.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00053-datasheet.pdf
+- id: arduino-portenta-h7
+  name: Arduino Portenta H7
+  vendor: Arduino
+  family: Arduino
+  soc: STM32H747XI
+  cpu: Cortex-M7 + Cortex-M4
+  cores: 2
+  clock_mhz: 480
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 1024
+  flash_kb: 2048
+  psram_kb_max: 8192
+  variants:
+  - id: std
+    name: Portenta H7
+    flash_kb: 16384
+    psram_kb: 8192
+  usable:
+    ram_kb: 409
+    flash_kb: 1792
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 256 KB de la flash interna;
+      además 8 MB SDRAM y 16 MB QSPI externos (no contados)'
+  ai_tier: tflm_medium
+  ai_note: 'Memoria interna: 2 MB de flash y 1 MB de RAM del STM32H747 (el IDE de Arduino suele mostrar ~512 KB contiguos).
+    Añade 8 MB de SDRAM y 16 MB de flash QSPI en la placa. Sirve para redes medianas con TFLM; sin NPU. Los pesos grandes
+    pueden vivir en QSPI/SDRAM a costa de latencia.'
+  accelerators:
+  - FPU
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: dual-core
+    url: https://docs.arduino.cc/resources/datasheets/ABX00042-ABX00045-ABX00046-datasheet.pdf
+    note: 'Datasheet ABX00042-ABX00045-ABX00046 (modificado 21/10/2026), p. 5 (leído): STM32H747XI de doble núcleo: Cortex-M7
+      a 480 MHz y Cortex-M4 a 240 MHz.'
+  - field: clock_mhz
+    value: 480 MHz (M7) / 240 MHz (M4)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00042-ABX00045-ABX00046-datasheet.pdf
+    note: 'Datasheet ABX00042-ABX00045-ABX00046 (modificado 21/10/2026), p. 5 (leído): Cortex-M7 a 480 MHz (doble precisión)
+      y Cortex-M4 a 240 MHz.'
+  - field: sram_kb
+    value: 1024 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00042-ABX00045-ABX00046-datasheet.pdf
+    note: 'Datasheet ABX00042-ABX00045-ABX00046 (modificado 21/10/2026), p. 5 (leído): STM32H747XI: ''2 Mbytes of Flash Memory''
+      y ''1 Mbyte of RAM''.'
+  - field: flash_kb
+    value: 2048 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00042-ABX00045-ABX00046-datasheet.pdf
+    note: 'Datasheet ABX00042-ABX00045-ABX00046 (modificado 21/10/2026), p. 5 (leído): STM32H747XI: ''2 Mbytes of Flash Memory''.'
+  - field: psram_kb_max
+    value: 8 MB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00042-ABX00045-ABX00046-datasheet.pdf
+    note: 'Datasheet ABX00042-ABX00045-ABX00046 (modificado 21/10/2026), p. 2 y 8 (leído): ''8 MB SDRAM / 16 MB QSPI Flash''
+      en la placa.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00042-ABX00045-ABX00046-datasheet.pdf
+- id: arduino-giga-r1
+  name: Arduino GIGA R1 WiFi
+  vendor: Arduino
+  family: Arduino
+  soc: STM32H747XI
+  cpu: Cortex-M7 + Cortex-M4
+  cores: 2
+  clock_mhz: 480
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 1024
+  flash_kb: 2048
+  psram_kb_max: 8192
+  variants:
+  - id: std
+    name: GIGA R1 WiFi
+    flash_kb: 16384
+    psram_kb: 8192
+  usable:
+    ram_kb: 409
+    flash_kb: 1792
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 256 KB de la flash interna;
+      además 8 MB SDRAM y 16 MB QSPI externos (no contados)'
+  ai_tier: tflm_medium
+  ai_note: 'Memoria interna: 2 MB de flash y 1 MB de RAM del STM32H747 (el IDE de Arduino suele mostrar ~512 KB contiguos).
+    8 MB de SDRAM (AS4C4M16SA) y 16 MB de flash QSPI (AT25SF128A); según foros ~1 MB de esa flash lo usa el firmware Wi-Fi
+    (no oficial). Redes medianas con TFLM; sin NPU.'
+  accelerators:
+  - FPU
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: dual-core
+    url: https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf
+    note: 'Datasheet ABX00063 (modificado 21/10/2026), p. 2 (leído): STM32H747XIH6 de doble núcleo (Cortex-M7 y Cortex-M4).'
+  - field: clock_mhz
+    value: 480 MHz (M7) / 240 MHz (M4)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf
+    note: 'Datasheet ABX00063 (modificado 21/10/2026), p. 2 (leído): Cortex-M7 hasta 480 MHz y Cortex-M4 hasta 240 MHz.'
+  - field: sram_kb
+    value: 1024 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf
+    note: 'Datasheet ABX00063 (modificado 21/10/2026), p. 2 (leído): STM32H747XI: ''2 MB Flash'' y ''1 MB RAM''.'
+  - field: flash_kb
+    value: 2048 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf
+    note: 'Datasheet ABX00063 (modificado 21/10/2026), p. 2 (leído): STM32H747XI: ''2 MB Flash''; además AT25SF128A de 16
+      MB de flash NOR.'
+  - field: psram_kb_max
+    value: 8 MB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf
+    note: 'Datasheet ABX00063 (modificado 21/10/2026), p. 2 y 9 (leído): AS4C4M16SA, 8 MB de SDRAM.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf
+- id: arduino-nicla-vision
+  name: Arduino Nicla Vision
+  vendor: Arduino
+  family: Arduino
+  soc: STM32H747AII6
+  cpu: Cortex-M7 + Cortex-M4
+  cores: 2
+  clock_mhz: 480
+  arch: armv7e-m
+  fpu: true
+  sram_kb: 1024
+  flash_kb: 2048
+  variants:
+  - id: std
+    name: Nicla Vision
+    flash_kb: 16384
+  usable:
+    ram_kb: 409
+    flash_kb: 1792
+    rule: '40 % de la SRAM (heurística nuestra); flash menos bootloader/reserva (supuesto nuestro): 256 KB de la flash interna;
+      16 MB QSPI aparte (no contados); sin SDRAM'
+  ai_tier: tflm_medium
+  ai_note: 'Factor 22,86x22,86 mm con cámara 2 MP, IMU y ToF: pensada para visión TinyML (p. ej. Edge Impulse/OpenMV). Mismo
+    STM32H747 (2 MB / 1 MB) y 16 MB de flash QSPI; no declara SDRAM. Sin NPU: la visión va con redes pequeñas int8.'
+  accelerators:
+  - FPU
+  - instrucciones DSP
+  runtimes:
+  - TFLM
+  - X-CUBE-AI / ST Edge AI
+  - código C (clásicos)
+  evidence:
+  - field: cores
+    value: dual-core
+    url: https://docs.arduino.cc/resources/datasheets/ABX00051-datasheet.pdf
+    note: 'Datasheet ABX00051 (modificado 21/10/2026), p. 2 (leído): STM32H747AII6 de doble núcleo (Cortex-M7 y Cortex-M4).'
+  - field: clock_mhz
+    value: 480 MHz (M7) / 240 MHz (M4)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00051-datasheet.pdf
+    note: 'Datasheet ABX00051 (modificado 21/10/2026), p. 2 (leído): Cortex-M7 hasta 480 MHz y Cortex-M4 hasta 240 MHz.'
+  - field: sram_kb
+    value: 1024 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00051-datasheet.pdf
+    note: 'El datasheet de Arduino (ABX00051) NO declara la RAM del STM32H747 (1 MB); esa cifra viene de ST (no leído: st.com
+      no responde desde este PC). Lista 16 MB de flash QSPI (AT25QL128A, p. 3).'
+  - field: flash_kb
+    value: 2048 KB
+    url: https://docs.arduino.cc/resources/datasheets/ABX00051-datasheet.pdf
+    note: El datasheet de Arduino (ABX00051) NO declara los 2 MB de flash del STM32H747; esa cifra viene de ST (no leído).
+      Las placas hermanas Portenta H7 y GIGA R1 sí la declaran (2 MB, leído).
+  verified: true
+  verification: official_search
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00051-datasheet.pdf
+- id: arduino-uno-q
+  name: Arduino UNO Q
+  vendor: Arduino
+  family: Arduino
+  soc: Qualcomm Dragonwing QRB2210 (MPU) + STM32U585 (MCU)
+  cpu: 'MPU: Cortex-A53 x4 @ 2,0 GHz (Linux Debian) + MCU: Cortex-M33'
+  cores: 4
+  clock_mhz: 2000
+  arch: aarch64+armv8-m
+  sram_kb: 786
+  ram_kb: 2097152
+  flash_kb: 2048
+  variants:
+  - id: 2gb
+    name: UNO Q 2 GB / 16 GB eMMC
+    ram_kb: 2097152
+    emmc_gb: 16
+  - id: 4gb
+    name: UNO Q 4 GB / 32 GB eMMC
+    ram_kb: 4194304
+    emmc_gb: 32
+  usable:
+    ram_kb: 314
+    flash_kb: 1792
+    rule: 'MCU: 40 % de la SRAM y flash menos 256 KB (heurística/supuesto nuestro); la RAM del MPU (2 o 4 GB) la comparte
+      Linux y no se usa aquí'
+  ai_tier: linux_runtime
+  ai_note: 'Diseño de doble procesador: el MPU Qualcomm QRB2210 (4x Cortex-A53 a 2,0 GHz) corre Linux Debian y es el lugar
+    para LiteRT/ONNX y modelos grandes; el MCU STM32U585 (Cortex-M33, 2 MB flash, 786 KB SRAM) hace tiempo real y TFLM pequeño.
+    Opciones: 2 GB LPDDR4 + 16 GB eMMC, o 4 GB + 32 GB (desde enero 2026). Por eso sram_kb/flash_kb describen el MCU y ram_kb
+    el MPU (variante 2 GB); flash_kb de eMMC es null. clock_mhz es el del MPU (el MCU va a 160 MHz según ST). Discrepancia:
+    la tabla comparativa de Arduino cita un STM32H5, pero las fichas de producto dicen STM32U585.'
+  accelerators: []
+  runtimes:
+  - LiteRT / ONNX Runtime (Linux, MPU)
+  - TFLM (MCU)
+  - código C (MCU)
+  evidence:
+  - field: cores
+    value: '4'
+    url: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf
+    note: 'Datasheet ABX00162 (modificado 21/10/2026), p. 6 (leído): MPU Qualcomm Dragonwing QRB2210: 4 x Arm Cortex-A53 a
+      2,0 GHz (64 bits).'
+  - field: clock_mhz
+    value: 2.0 GHz (MPU)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf
+    note: 'Datasheet ABX00162 (modificado 21/10/2026), p. 6 (leído): MPU a 2,0 GHz; el MCU STM32U585 (Cortex-M33) llega a
+      160 MHz.'
+  - field: sram_kb
+    value: 786 KB (MCU)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf
+    note: 'Datasheet ABX00162 (modificado 21/10/2026), p. 7 (leído): STM32U585: ''2 MB Flash, 786 kB SRAM''.'
+  - field: flash_kb
+    value: 2048 KB (MCU)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf
+    note: 'Datasheet ABX00162 (modificado 21/10/2026), p. 7 (leído): STM32U585: ''2 MB Flash''; eMMC de 16 o 32 GB para el
+      sistema (no es flash del MCU).'
+  - field: ram_kb
+    value: 2 GB LPDDR4
+    url: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf
+    note: 'Datasheet ABX00162 (modificado 21/10/2026), p. 1, 6 y 7 (leído): LPDDR4X de 2 GB (variante base) o 4 GB; eMMC de
+      16 o 32 GB.'
+  - field: ram_kb.4gb
+    value: 4 GB LPDDR4
+    url: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf
+    note: 'Datasheet ABX00162 (modificado 21/10/2026), p. 6 (leído): ABX00173: 4 GB de RAM, 32 GB de almacenamiento.'
+  verified: true
+  verification: datasheet_read
+  retrieved: '2026-10-28'
+  source: https://docs.arduino.cc/resources/datasheets/ABX00162-datasheet.pdf

@@ -1,0 +1,54 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+secrets.h
+credentials*
+*.token
+node_modules/
+dist/
+build/
+.vscode/
+# artefactos locales de entrenamiento
+runs/
+artifacts/
+*.egg-info/
+.workspace/
+
+# empaquetado del núcleo (PyInstaller)
+packaging/build/
+packaging/dist/
+
+# datos temporales de la rueda (los crea packaging/build_wheel.py)
+tinyml_studio/_data/
+packaging/dist/
+
+# copias aisladas de agentes
+.claude/worktrees/
+
+ui/build-resources/
+
+# app de escritorio compilada localmente (para ejecutarla y revisarla)
+app_desktop/
+
+# datasets nuevos del usuario: privados, nunca se versionan
+datasets/archive.zip
+datasets/archive/
+
+# datos privados y material personal: nunca se suben
+datasets/
+reference/
+tmp/
+*.ipynb
+*.csv
+bitacora.md
+pendientes.md
+CLAUDE.md
+como_ejecutar.txt
+
+# documentación interna: del directorio docs/ solo se publican el manual y los README
+docs/*.md
+docs/adr/
+docs/research/

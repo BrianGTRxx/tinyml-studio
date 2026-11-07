@@ -1,0 +1,545 @@
+# English texts of the boards (loaded by tinyml_studio/boards/loader.py when the language is 'en').
+# Keys: board id -> ai_note, rule (usable.rule), evidence {field: note or [notes in order]}. Spanish originals live in the family files.
+accelerators:
+  FPU precisión simple: single-precision FPU
+  instrucciones DSP: DSP instructions
+  vectoriales (ESP-NN): vector (ESP-NN)
+  FPU: FPU
+  instrucciones vectoriales del LX7: LX7 vector instructions
+  ESP-NN (ensamblador optimizado para S3): ESP-NN (S3-optimized assembly)
+  extensión RISC-V de IA/DSP (XespV): RISC-V AI/DSP extension (XespV)
+  bucles por hardware (XespLoop): hardware loops (XespLoop)
+  FPU doble precisión: double-precision FPU
+  caché L1: L1 cache
+  FPU en ambos núcleos: FPU on both cores
+  NPU ST Neural-ART (600 GOPS): ST Neural-ART NPU (600 GOPS)
+  vectoriales Helium (M55): Helium vector (M55)
+  TrustZone: TrustZone
+  FPU (Cortex-M33): FPU (Cortex-M33)
+boards:
+  arduino-uno-r3:
+    ai_note: '2 KB of SRAM and 32 KB of flash on an 8-bit AVR without FPU. TFLM does NOT fit or run: it
+      needs 32 bits, a tensor arena of several KB and tens of KB of flash for the interpreter alone. Only
+      very small decision trees or linear/threshold models in C (integers, no efficient float) with very
+      few features fit. Discrepancy: the user manual says ''up to 20 MHz'' (the chip limit); the board
+      uses a 16 MHz resonator.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 0.5 KB bootloader
+      + ~8 KB runtime/sketch'
+    evidence:
+      clock_mhz: 'Datasheet A000066 (modified 21/10/2026), p. 2 y 6 (read): ''AVR CPU at up to 16 MHz'';
+        the ATmega328P ''running at up to 20 MHz'' (chip limit); the board uses 16 MHz.'
+      sram_kb: 'Datasheet A000066 (modified 21/10/2026), p. 2 (read): 2 kB SRAM.'
+      flash_kb: 'Datasheet A000066 (modified 21/10/2026), p. 2 (read): 32 kB flash (the 0.5 KB bootloader
+        figure comes from the Arduino store, not the datasheet).'
+  arduino-mega-2560:
+    ai_note: '8 KB of SRAM and 256 KB of flash on an 8-bit AVR: roomier than the UNO R3 but TFLM is still
+      not viable (no 8-bit AVR port and 8 KB of RAM is not enough for arena + interpreter). Small trees/forests
+      and linear models in C work.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 8 KB bootloader
+      (official figure) + ~16 KB runtime/sketch'
+    evidence:
+      clock_mhz: 'Datasheet A000067 (modified 21/10/2026), p. 1 (read): ''operates at a frequency of 16
+        MHz''.'
+      sram_kb: 'Datasheet A000067 (modified 21/10/2026), p. 2 (read): ''8k bytes Internal SRAM''.'
+      flash_kb: 'Datasheet A000067 (modified 21/10/2026), p. 2 (read): ''256k bytes (of which 8k is used
+        for the bootloader)''.'
+  arduino-uno-r4-minima:
+    ai_note: 'Cortex-M4F at 48 MHz with 32 KB of SRAM and 256 KB of flash: tiny networks (tens of KB)
+      or classical models in C; the TFLM arena competes with the rest of the sketch. The extra 8 KB data
+      memory (EEPROM) does not count.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 32 KB'
+    evidence:
+      clock_mhz: 'Datasheet ABX00080 (modified 21/10/2026), p. 1-2 (read): Renesas RA4M1 at 48 MHz, Arm
+        Cortex-M4 with FPU.'
+      flash_kb: 'Datasheet ABX00080 (modified 21/10/2026), p. 2 (read): 256 kB flash.'
+      sram_kb: 'Datasheet ABX00080 (modified 21/10/2026), p. 2 (read): 32 kB SRAM and 8 kB data memory
+        (EEPROM).'
+  arduino-uno-r4-wifi:
+    ai_note: 'Cortex-M4F at 48 MHz with 32 KB of SRAM and 256 KB of flash: tiny networks (tens of KB)
+      or classical models in C; the TFLM arena competes with the rest of the sketch. The board''s ESP32-S3
+      is only a Wi-Fi/BLE coprocessor (384 KB ROM, 512 KB SRAM) and is not programmed for ML in the normal
+      workflow.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 32 KB'
+    evidence:
+      clock_mhz: 'Datasheet ABX00087 (modified 21/10/2026), p. 1-2 (read): Renesas RA4M1 at 48 MHz, Arm
+        Cortex-M4 with FPU; the ESP32-S3-MINI-1-N8 module is the secondary MCU for Wi-Fi/Bluetooth.'
+      flash_kb: 'Datasheet ABX00087 (modified 21/10/2026), p. 2 (read): 256 kB flash.'
+      sram_kb: 'Datasheet ABX00087 (modified 21/10/2026), p. 2 (read): 32 kB SRAM and 8 kB data memory
+        (EEPROM).'
+  arduino-nano-33-ble:
+    ai_note: 'Cortex-M4F at 64 MHz, 256 KB of SRAM and 1 MB of flash: the classic TinyML platform with
+      TFLM (small/medium int8 networks). No NN accelerator. Arduino lists it as end of life; the Rev2
+      successor uses the same nRF52840.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 64 KB'
+    evidence:
+      clock_mhz: 'Datasheet ABX00030 (modified 21/10/2026), p. 2 y 6 (read): ''64 MHz Arm Cortex-M4F (with
+        FPU)''; ''running at up to 64MHz''.'
+      sram_kb: 'Datasheet ABX00030 (modified 21/10/2026), p. 2 (read): ''1 MB Flash + 256 kB RAM'' (nRF52840).'
+      flash_kb: 'Datasheet ABX00030 (modified 21/10/2026), p. 2 (read): ''1 MB Flash + 256 kB RAM'' (nRF52840).'
+  arduino-nano-esp32:
+    ai_note: 'Same core as the ESP32-S3: 512 KB of SRAM, 8 MB of PSRAM on the module and 16 MB of external
+      QSPI flash on the board. Medium int8 networks with TFLM (+ESP-NN). Evidence comes from arduino.cc
+      only; the flash is external, which is why flash_kb is null and it is listed in variants.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 25 % of
+      the 16 MB of external flash for model+firmware; the flash is not inside the chip'
+    evidence:
+      cores: 'Datasheet ABX00083 (modified 21/10/2026), p. 2 (read): ''Xtensa Dual-core 32-bit LX7 Microprocessor''
+        (ESP32-S3).'
+      sram_kb: 'Datasheet ABX00083 (modified 21/10/2026), p. 2 (read): 384 kB ROM, 512 kB SRAM and 16
+        kB SRAM in RTC (8 kB RTC FAST + 8 kB RTC SLOW per p. 8).'
+      psram_kb_max: 'Datasheet ABX00083 (modified 21/10/2026), p. 9 (read): ''The NORA-W106-10B module
+        includes 8 MB of embedded PSRAM (Octal SPI)''.'
+      variants.flash_kb: 'Datasheet ABX00083 (modified 21/10/2026), p. 7 (read): U3 GD25B128EWIGR, 128
+        Mbit (16 MB) external flash.'
+      clock_mhz: 'Datasheet ABX00083 (modified 21/10/2026), p. 2 y 5 (read): ''Up to 240 MHz''.'
+  arduino-nano-rp2040-connect:
+    ai_note: 'Two Cortex-M0+ at 133 MHz without FPU or DSP: float inference is slow; use int8. 264 KB
+      of on-chip SRAM and 16 MB of external QSPI flash. Arduino lists it as end of life.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 25 % of
+      the 16 MB of external QSPI flash'
+    evidence:
+      variants.flash_kb: 'Datasheet ABX00053 (modified 21/10/2026), p. 2 y 9 (read): U5 AT25SF128A, 16
+        MB NOR flash.'
+      cores: 'Datasheet ABX00053 (modified 21/10/2026), p. 2 (read): ''133 MHz 32bit Dual Core Arm Cortex-M0+''.'
+      clock_mhz: 'Datasheet ABX00053 (modified 21/10/2026), p. 2 (read): ''133 MHz''.'
+      sram_kb: 'Datasheet ABX00053 (modified 21/10/2026), p. 2 (read): ''264 kB on-chip SRAM''; support
+        for up to 16 MB of off-chip flash over QSPI.'
+  arduino-portenta-h7:
+    ai_note: 'Internal memory: 2 MB of flash and 1 MB of RAM of the STM32H747 (the Arduino IDE usually
+      shows ~512 KB contiguous). Adds 8 MB of SDRAM and 16 MB of QSPI flash on the board. Fits medium
+      networks with TFLM; no NPU. Large weights can live in QSPI/SDRAM at the cost of latency.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 256 KB of
+      the internal flash; plus 8 MB SDRAM and 16 MB external QSPI (not counted)'
+    evidence:
+      clock_mhz: 'Datasheet ABX00042-ABX00045-ABX00046 (modified 21/10/2026), p. 5 (read): Cortex-M7 at
+        480 MHz (double precision) and Cortex-M4 at 240 MHz.'
+      psram_kb_max: 'Datasheet ABX00042-ABX00045-ABX00046 (modified 21/10/2026), p. 2 y 8 (read): ''8
+        MB SDRAM / 16 MB QSPI Flash'' on the board.'
+      cores: 'Datasheet ABX00042-ABX00045-ABX00046 (modified 21/10/2026), p. 5 (read): Dual-core STM32H747XI:
+        Cortex-M7 at 480 MHz and Cortex-M4 at 240 MHz.'
+      sram_kb: 'Datasheet ABX00042-ABX00045-ABX00046 (modified 21/10/2026), p. 5 (read): STM32H747XI:
+        ''2 Mbytes of Flash Memory'' and ''1 Mbyte of RAM''.'
+      flash_kb: 'Datasheet ABX00042-ABX00045-ABX00046 (modified 21/10/2026), p. 5 (read): STM32H747XI:
+        ''2 Mbytes of Flash Memory''.'
+  arduino-giga-r1:
+    ai_note: 'Internal memory: 2 MB of flash and 1 MB of RAM of the STM32H747 (the Arduino IDE usually
+      shows ~512 KB contiguous). 8 MB of SDRAM (AS4C4M16SA) and 16 MB of QSPI flash (AT25SF128A); according
+      to forums ~1 MB of that flash is used by the Wi-Fi firmware (unofficial). Medium networks with TFLM;
+      no NPU.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 256 KB of
+      the internal flash; plus 8 MB SDRAM and 16 MB external QSPI (not counted)'
+    evidence:
+      cores: 'Datasheet ABX00063 (modified 21/10/2026), p. 2 (read): Dual-core STM32H747XIH6 (Cortex-M7
+        and Cortex-M4).'
+      sram_kb: 'Datasheet ABX00063 (modified 21/10/2026), p. 2 (read): STM32H747XI: ''2 MB Flash'' and
+        ''1 MB RAM''.'
+      flash_kb: 'Datasheet ABX00063 (modified 21/10/2026), p. 2 (read): STM32H747XI: ''2 MB Flash''; also
+        AT25SF128A 16 MB NOR flash.'
+      psram_kb_max: 'Datasheet ABX00063 (modified 21/10/2026), p. 2 y 9 (read): AS4C4M16SA, 8 MB SDRAM.'
+      clock_mhz: 'Datasheet ABX00063 (modified 21/10/2026), p. 2 (read): Cortex-M7 up to 480 MHz and Cortex-M4
+        up to 240 MHz.'
+  arduino-nicla-vision:
+    ai_note: '22.86x22.86 mm form factor with a 2 MP camera, IMU and ToF: designed for TinyML vision (e.g.
+      Edge Impulse/OpenMV). Same STM32H747 (2 MB / 1 MB) and 16 MB of QSPI flash; no SDRAM declared. No
+      NPU: vision runs with small int8 networks.'
+    rule: '40 % of the SRAM (our heuristic); flash minus bootloader/reserve (our assumption): 256 KB of
+      the internal flash; 16 MB QSPI separate (not counted); no SDRAM'
+    evidence:
+      clock_mhz: 'Datasheet ABX00051 (modified 21/10/2026), p. 2 (read): Cortex-M7 up to 480 MHz and Cortex-M4
+        up to 240 MHz.'
+      cores: 'Datasheet ABX00051 (modified 21/10/2026), p. 2 (read): Dual-core STM32H747AII6 (Cortex-M7
+        and Cortex-M4).'
+      sram_kb: 'The Arduino datasheet (ABX00051) does NOT state the STM32H747 RAM (1 MB); that figure
+        comes from ST (not read: st.com does not respond from this PC). It lists 16 MB of QSPI flash (AT25QL128A,
+        p. 3).'
+      flash_kb: The Arduino datasheet (ABX00051) does NOT state the STM32H747's 2 MB of flash; that figure
+        comes from ST (not read). The sister boards Portenta H7 and GIGA R1 do state it (2 MB, read).
+  arduino-uno-q:
+    ai_note: 'Dual-processor design: the Qualcomm QRB2210 MPU (4x Cortex-A53 at 2.0 GHz) runs Debian Linux
+      and is the place for LiteRT/ONNX and large models; the STM32U585 MCU (Cortex-M33, 2 MB flash, 786
+      KB SRAM) handles real time and small TFLM. Options: 2 GB LPDDR4 + 16 GB eMMC, or 4 GB + 32 GB (from
+      January 2026). That is why sram_kb/flash_kb describe the MCU and ram_kb the MPU (2 GB variant);
+      the eMMC flash_kb is null. clock_mhz is the MPU''s (the MCU runs at 160 MHz according to ST). Discrepancy:
+      Arduino''s comparison table cites an STM32H5, but the product sheets say STM32U585.'
+    rule: 'MCU: 40 % of the SRAM and flash minus 256 KB (our heuristic/assumption); the MPU''s RAM (2
+      or 4 GB) is shared with Linux and is not used here'
+    evidence:
+      sram_kb: 'Datasheet ABX00162 (modified 21/10/2026), p. 7 (read): STM32U585: ''2 MB Flash, 786 kB
+        SRAM''.'
+      ram_kb: 'Datasheet ABX00162 (modified 21/10/2026), p. 1, 6 y 7 (read): 2 GB (base variant) or 4
+        GB LPDDR4X; 16 or 32 GB eMMC.'
+      ram_kb.4gb: 'Datasheet ABX00162 (modified 21/10/2026), p. 6 (read): ABX00173: 4 GB RAM, 32 GB storage.'
+      cores: 'Datasheet ABX00162 (modified 21/10/2026), p. 6 (read): Qualcomm Dragonwing QRB2210 MPU:
+        4 x Arm Cortex-A53 at 2.0 GHz (64-bit).'
+      clock_mhz: 'Datasheet ABX00162 (modified 21/10/2026), p. 6 (read): MPU at 2.0 GHz; the STM32U585
+        MCU (Cortex-M33) goes up to 160 MHz.'
+      flash_kb: 'Datasheet ABX00162 (modified 21/10/2026), p. 7 (read): STM32U585: ''2 MB Flash''; 16
+        or 32 GB eMMC for the OS (not MCU flash).'
+  esp32:
+    ai_note: '448 KB of ROM separate. No vector unit: TFLM with small networks (ESP-NN with generic optimizations
+      only). WROVER-E modules ship 8 MB of PSRAM but the chip only maps 4 MB into the data space (the
+      rest needs the himem API); PSRAM is slower and cannot be used while the flash cache is disabled.'
+    rule: 'OUR HEURISTIC: 40 % of 520 KB of SRAM; flash = 4 MB (WROOM-32E-N4, the most common) minus 1
+      MB for firmware/OTA'
+    evidence:
+      clock_mhz: 'Datasheet v5.3, p. 4 (read): Xtensa LX6, one or two cores; 2 cores at 240 MHz = 1079.96
+        CoreMark; the pipeline supports up to 240 MHz (160 MHz on the S0WD, NRND).'
+      cores: 'Datasheet v5.3, p. 11 (read): the D0WD-V3, D0WDRH2-V3 and U4WDH are dual-core (the U4WDH
+        is built dual-core per PCN-2021-021); the S0WD (NRND) is single-core.'
+      sram_kb: 'Datasheet v5.3, p. 4 (read): ROM 448 KB, SRAM 520 KB, RTC SRAM 16 KB.'
+      flash_kb: 'WROOM-32E v2.1, p. 3 (read): N4/N8/N16 = 4/8/16 MB Quad SPI; H4/H8 (105 °C); N4R2/N8R2/N16R2
+        = plus 2 MB Quad PSRAM. Chip v5.3, p. 11: the U4WDH has 4 MB of in-package flash.'
+      psram_kb_max:
+      - 'Datasheet v5.3, p. 27 (read): supports up to 8 MB of external SRAM and can map up to 4 MB at
+        a time into the data space; up to 16 MB of external flash.'
+      - 'WROVER-E v2.4, p. 3 (read): N4R8/N8R8/N16R8 = 8 MB Quad PSRAM; the N*R2 (2 MB) are EOL. DISCREPANCY:
+        8 MB module vs 4 MB mappable at a time (the rest needs himem).'
+  esp32-s2:
+    ai_note: '128 KB of ROM separate. Single core and no confirmed vector unit: only very small networks
+      with TFLM. The WROOM/WROVER modules consulted are listed as end of life (EOL). The PSRAM maximum
+      (10.5 MB) is the virtual space documented by ESP-IDF, not a commercial module size (the WROVER module
+      ships 2 MB).'
+    rule: 'OUR HEURISTIC: 40 % of 320 KB of SRAM; flash = 4 MB (WROOM/WROVER) minus 1 MB for firmware/OTA'
+    evidence:
+      clock_mhz: 'Datasheet v1.9, p. 3 (read): single-core 32-bit LX7, ''up to 240 MHz''; 542.80 CoreMark
+        at 240 MHz.'
+      cores: 'Datasheet v1.9, p. 3 (read): Xtensa single-core 32-bit LX7.'
+      sram_kb: 'Datasheet v1.9, p. 3 (read): ROM 128 KB, SRAM 320 KB, RTC SRAM 16 KB.'
+      flash_kb: 'Chip v1.9, p. 11, table 1-1 (read): S2FH4 = 4 MB and S2FH2 (EOL) = 2 MB of in-package
+        flash; S2FN4R2 = 4 MB + 2 MB PSRAM; S2R2 = 2 MB PSRAM. Modules (both EOL): WROOM v1.5 = 4 MB flash;
+        WROVER v1.4 = 4 MB + 2 MB PSRAM.'
+      psram_kb_max: 'ESP-IDF v6.1 guide for the ESP32-S2 (NOT from the datasheet): it can use up to 10.5
+        MB of virtual addresses for external PSRAM. Datasheet v1.9 only lists 2 MB in-package PSRAM and
+        states no device limit.'
+  esp32-s3:
+    ai_note: '384 KB of ROM separate (plus 16 KB RTC SRAM). Vector instructions for neural networks; ESP-NN
+      ships S3-optimized assembly (3-10x faster than without the library, according to the component registry).
+      PSRAM: the chip supports up to 1 GB of external flash/RAM at device level but only 32 MB of virtual
+      addresses at a time (32 MB is used as the chip maximum); the largest documented module/package is
+      16 MB (WROOM-1 N16R16VA, S3R16V chip). WROOM-1 N*R8 modules with octal PSRAM are listed for -40
+      to 65 °C. N4R2 = 4 MB of flash + 2 MB of Quad PSRAM (confirmed in the module datasheet v1.8).'
+    rule: 'OUR HEURISTIC: 40 % of 512 KB of SRAM; flash = 8 MB (N8R8, the most common combination on boards)
+      minus 1 MB for firmware/OTA'
+    evidence:
+      clock_mhz: 'Datasheet v2.2, p. 3 (read): 32-bit dual-core Xtensa LX7, up to 240 MHz; 1329.92 CoreMark
+        at 240 MHz.'
+      cores: 'Datasheet v2.2, p. 1 (read): Xtensa 32-bit LX7 dual-core.'
+      sram_kb: 'Datasheet v2.2, p. 4 (read): ROM 384 KB, SRAM 512 KB, RTC SRAM 16 KB (8 KB FAST + 8 KB
+        SLOW, p. 38).'
+      flash_kb: 'WROOM-1 datasheet v1.8, p. 3, table 1-1 (read): N4/N8/N16 = 4/8/16 MB Quad SPI; N*R2
+        = + 2 MB Quad PSRAM; N*R8 = + 8 MB Octal PSRAM; N16R16VA = 16 MB + 16 MB Octal PSRAM.'
+      psram_kb_max:
+      - 'Datasheet v2.2, p. 39 (read): supports up to 1 GB of external flash and RAM; external flash/RAM
+        mapped into a 32 MB instruction space and external RAM into a 32 MB data space.'
+      - 'Datasheet v2.2, p. 13, table 1-1 (read): ESP32-S3R16V = 16 MB Octal PSRAM in package (1.8 V);
+        S3R8 = 8 MB; S3RH2 = 2 MB; S3FH4R2 = 4 MB flash + 2 MB PSRAM; S3FN8 = 8 MB flash. S3R8V and S3R2
+        are EOL. DISCREPANCY: chip 1 GB / 32 MB mapped vs 16 MB as the largest in-package PSRAM.'
+      vector_instructions: 'Datasheet v2.2, p. 36 (read): extended instruction set for AI and DSP algorithms:
+        128-bit registers and 128-bit vector operations.'
+      esp_nn: 'ESP32-S3: assembly versions that exploit the vector instructions; ESP32 and C3: generic
+        optimizations. (Component registry; not from the datasheet.)'
+  esp32-c3:
+    ai_note: '384 KB of ROM separate; 16 KB of the 400 KB of SRAM are configured as cache. No vector unit
+      (ESP-NN with generic optimizations only): very small networks. No PSRAM documented in what was consulted
+      (null = unconfirmed).'
+    rule: 'OUR HEURISTIC: 40 % of 400 KB of SRAM; flash = 4 MB (MINI-1 / WROOM-02-N4) minus 1 MB for firmware/OTA'
+    evidence:
+      clock_mhz: 'Datasheet v2.4, p. 3 (read): 32-bit single-core RISC-V, ''up to 160 MHz''.'
+      cores: 'Datasheet v2.4, p. 3 (read): 32-bit RISC-V single-core processor.'
+      sram_kb: 'Datasheet v2.4, p. 4 (read): ROM 384 KB, SRAM 400 KB (16 KB for cache), RTC SRAM 8 KB.'
+      flash_kb: 'Chip v2.4, p. 12, table 1-1 (read): C3FH4/FH4X = 4 MB and C3FH8X = 8 MB of in-package
+        flash (C3FN4 EOL; the chip supports up to 16 MB of external flash, p. 35). MINI-1 v2.2, p. 3:
+        N4X/H4X = 4 MB, H8X = 8 MB. WROOM-02 v1.7, p. 3: N4/N8 = 4/8 MB of external SPI flash. No sheet
+        lists PSRAM.'
+  esp32-c6:
+    ai_note: '320 KB of ROM separate; HP SRAM 512 KB + 16 KB low-power SRAM. One 160 MHz HP core (plus
+      an LP core up to 20 MHz) without a confirmed vector unit: small networks. WROOM-1 modules have no
+      PSRAM (null).'
+    rule: 'OUR HEURISTIC: 40 % of 512 KB of HP SRAM; flash = 4 MB (WROOM-1-N4) minus 1 MB for firmware/OTA'
+    evidence:
+      clock_mhz: 'Datasheet v1.5, p. 3 (read): HP RISC-V processor with a four-stage pipeline, ''up to
+        160 MHz''; 496.66 CoreMark (3.10 CoreMark/MHz).'
+      cores: 'Datasheet v1.5, p. 3-4 (read): one HP and one LP processor (two-stage, up to 20 MHz); only
+        the HP is counted.'
+      sram_kb: 'Datasheet v1.5, p. 4 (read): ROM 320 KB, HP SRAM 512 KB, LP SRAM 16 KB; 32 KB L1 cache.'
+      flash_kb: 'Chip v1.5, p. 13, table 1-1 (read): C6FH4 = 4 MB and C6FH8 = 8 MB Quad SPI in package;
+        external flash up to 16 MB (p. 40). WROOM-1 v1.4, p. 4: N4/N8/N16 = 4/8/16 MB. No sheet lists
+        PSRAM.'
+  esp32-c5:
+    ai_note: '320 KB of ROM separate; 16 KB LP SRAM. No confirmed vector unit: small networks. DISCREPANCY:
+      the 2022 launch announcement said 400 KB of SRAM; datasheet v1.5 says 384 KB (the datasheet is used).
+      PSRAM: 2 MB (C5HR2) or 8 MB (C5HR8) in package, and WROOM-1 modules with 2 MB (N4R2, N8R2, N16R2)
+      or 8 MB (N8R8, N16R8, N32R8); the chip maps at most 32 MB of external flash or PSRAM. The datasheet
+      lists the C5NF8R2LA variant (8 MB flash + 2 MB PSRAM) as not yet in mass production.'
+    rule: 'OUR HEURISTIC: 40 % of 384 KB of HP SRAM; flash = 4 MB (WROOM-1-N4) minus 1 MB for firmware/OTA'
+    evidence:
+      clock_mhz: 'Datasheet v1.5, p. 4 (read): HP RISC-V processor with a five-stage pipeline, ''up to
+        240 MHz'' (820.19 CoreMark); LP processor up to 48 MHz.'
+      cores: 'Datasheet v1.5, p. 4 (read): one HP and one LP processor; only the HP is counted.'
+      sram_kb: 'Datasheet v1.5, p. 4 (read): ROM 320 KB, HP SRAM 384 KB, LP SRAM 16 KB.'
+      flash_kb: 'Chip v1.5, p. 14, table 1-1 (read): C5HF4 = 4 MB of in-package flash; C5HR2 = 2 MB and
+        C5HR8 = 8 MB of PSRAM; C5NF8R2LA = 8 MB + 2 MB. WROOM-1 v1.3, p. 4: N4, N4R2, N8R2, N16R2, N8R8,
+        N16R8, N32R8.'
+      psram_kb_max: 'Datasheet v1.5, p. 41 (read): the size of the external flash or PSRAM can be 32 MB
+        at most. In package: 2 MB (C5HR2) or 8 MB (C5HR8).'
+  esp32-p4:
+    ai_note: 'No on-chip flash (the board provides it: the chip requires external flash, up to 64 MB).
+      AI and DSP extension (XespV: 8 new 128-bit registers and 128-bit vector operations) and hardware
+      loops (XespLoop) on the HP CPU, according to the datasheet; it was not confirmed that ESP-NN/TFLM
+      already use them, so the medium tier is based on 768 KB of L2MEM + PSRAM and 400 MHz. Frequency:
+      the datasheet published today (pre-release v0.7) gives 400 MHz, and the v3.x revision guide (v1.1)
+      says that revision raises the maximum from 360 to 400 MHz; a v1.2 datasheet with 360 MHz by default,
+      cited by an earlier search, could not be located. PSRAM: 16 MB (NRW16X) or 32 MB (NRW32X) in package;
+      the controller supports up to 64 MB.'
+    rule: 'OUR HEURISTIC: 40 % of 768 KB of L2MEM; flash not defined: the chip has no flash and depends
+      on the board'
+    evidence:
+      clock_mhz: 'Chip revision v3.x guide v1.1, p. 5 (read): raises the HP CPU maximum frequency from
+        360 to 400 MHz. Pre-release datasheet v0.7, p. 3 (read): ''up to 400 MHz''.'
+      cores: 'Pre-release datasheet v0.7, p. 3 (read): 32-bit dual-core RISC-V for the HP system, plus
+        an LP core up to 40 MHz.'
+      sram_kb: 'Pre-release datasheet v0.7, p. 3 (read): 768 KB HP L2MEM, 128 KB HP ROM, 8 KB system SPM,
+        32 KB LP SRAM.'
+      flash_kb: 'Pre-release datasheet v0.7, p. 35 (read): requires off-package flash for firmware and
+        data (up to 64 MB). The NRW16X/NRW32X only integrate PSRAM.'
+      psram_kb_max: 'Pre-release datasheet v0.7, p. 11 and 46 (read): the controller supports up to 64
+        MB; in package 16 MB (NRW16X) or 32 MB (NRW32X), OPI/HPI at 1.8 V.'
+      ai_extension: 'Pre-release datasheet v0.7, p. 3 and 40 (read): AI and DSP extension (XespV) and
+        hardware loop instructions (XespLoop).'
+  rpi-zero:
+    ai_note: 'A single ARM11 core (armv6, no NEON) at 1 GHz and 512 MB: it is weak. Good for very small
+      inference with tflite-runtime/ONNX Runtime if wheels exist for armv6 (not verified); in practice
+      classical models or tiny networks are better. A single RAM variant (512 MB), hence ram_kb = 524288.'
+    rule: '25 % of the RAM of the smallest variant (our heuristic, not an official figure); the OS, the
+      desktop and other processes use the rest. Flash: not applicable, storage is an SD card.'
+    evidence:
+      cores: 'Official processors documentation (read): the BCM2835 ''contains a single-core ARM1176JZF-S
+        processor'' and is used by the Pi Zero and Zero W.'
+      clock_mhz: 'Official product page (read): ''1GHz single-core CPU''.'
+      ram_kb: 'Official product page (read): ''512MB RAM''. There is no official datasheet or product
+        brief PDF for the original Zero (checked: the page links none and the datasheets.raspberrypi.com
+        paths return 404).'
+  rpi-zero-2w:
+    ai_note: 'Four Cortex-A53 at 1 GHz with 512 MB (the only option): enough for tflite-runtime/LiteRT
+      or ONNX Runtime with small networks, no accelerator. Limited memory; int8 quantization recommended.
+      No NPU.'
+    rule: '25 % of the RAM of the smallest variant (our heuristic, not an official figure); the OS, the
+      desktop and other processes use the rest. Flash: not applicable, storage is an SD card.'
+    evidence:
+      cores: 'Product brief Apr-2024, p. 2 (read): ''quad-core 64-bit Arm Cortex-A53 CPU, clocked at 1GHz''.'
+      clock_mhz: 'Product brief Apr-2024, p. 3 (read): BCM2710A1, Arm Cortex-A53 at 1 GHz.'
+      ram_kb: 'Product brief Apr-2024, p. 2-3 (read): ''RP3A0 SiP ... BCM2710A1 die with 512MB of LPDDR2
+        SDRAM''; in production until at least January 2030.'
+  rpi-3b-plus:
+    ai_note: 1 GB (the only option; the SoC cannot address more). Peak of 1.4 GHz; the official documentation
+      says that when the soft thermal limit is reached the clock drops from 1.4 to 1.2 GHz. LiteRT/tflite-runtime
+      or ONNX Runtime with small/medium networks on CPU; no NPU. In production until at least January
+      2028 according to the brief (Oct-2025); the 3A+ goes until January 2030.
+    rule: '25 % of the RAM of the smallest variant (our heuristic, not an official figure); the OS, the
+      desktop and other processes use the rest. Flash: not applicable, storage is an SD card.'
+    evidence:
+      cores: 'Product brief Oct-2025, p. 2 (read): 64-bit quad-core processor at 1.4 GHz.'
+      clock_mhz: 'Product brief Oct-2025, p. 3 (read): ''Broadcom BCM2837B0, Cortex-A53 64-bit SoC @ 1.4GHz''.'
+      ram_kb: 'Product brief Oct-2025, p. 3 (read): ''Memory: 1GB''; in production until at least January
+        2028. (LPDDR2 comes from the product page, not the brief.)'
+  rpi-3a-plus:
+    ai_note: 'Same SoC as the 3B+ but 512 MB: less headroom for large models. LiteRT/ONNX Runtime with
+      small, quantized networks; no NPU.'
+    rule: '25 % of the RAM of the smallest variant (our heuristic, not an official figure); the OS, the
+      desktop and other processes use the rest. Flash: not applicable, storage is an SD card.'
+    evidence:
+      cores: 'Product brief Apr-2024, p. 2 (read): 64-bit quad-core processor at 1.4 GHz.'
+      clock_mhz: 'Product brief Apr-2024, p. 3 (read): ''Broadcom BCM2837B0, Cortex-A53 64-bit SoC @ 1.4
+        GHz''.'
+      ram_kb: 'Product brief Apr-2024, p. 3 (read): ''Memory: 512MB LPDDR2 SDRAM''; in production until
+        at least January 2030.'
+  rpi-4b:
+    ai_note: 'ram_kb = 1 GB, the smallest variant (the 2/3/4/8 GB variants are in ''variants''; the Oct-2026
+      brief confirms the 3 GB one). With 4 A72 cores it runs LiteRT/tflite-runtime and ONNX Runtime on
+      CPU comfortably; no on-board NPU. Clock: the brief (Oct-2026) gives 1.8 GHz; datasheet release 1.1
+      (Mar-2024) and the processors documentation give 1.5 GHz (old chip revisions); 1800 is used as the
+      most recent document. NOTE: there is no official ''Raspberry Pi 4 Model A'' (the official documentation
+      only lists the 4B; the A models are 3A+ and earlier): no board is invented. In production until
+      at least January 2034.'
+    rule: '25 % of the RAM of the smallest variant (our heuristic, not an official figure); the OS, the
+      desktop and other processes use the rest. Flash: not applicable, storage is an SD card.'
+    evidence:
+      cores: 'Product brief Oct-2026, p. 3 (read): ''BCM2711, quad-core Cortex-A72 (Arm v8) 64-bit SoC''.'
+      clock_mhz: 'Product brief Oct-2026, p. 3 (read): ''@ 1.8GHz''. DISCREPANCY: datasheet release 1.1
+        (12/03/2024, p. 7, read) and the processors documentation say 1.5 GHz; the most recent document
+        is used.'
+      ram_kb: 'Product brief Oct-2026, p. 3 (read): ''1GB, 2GB, 3GB, 4GB or 8GB LPDDR4 (depending on model)''.
+        Datasheet release 1.1 lists 1, 2 and 4 GB (and 8 GB in the introduction).'
+  rpi-5:
+    ai_note: 'ram_kb = 1 GB, the smallest variant listed (1/2/4/8/16 GB options in ''variants''). Cortex-A76
+      at 2.4 GHz: the most powerful SBC of the family for LiteRT/ONNX Runtime on CPU. No NPU on the board;
+      the AI HAT+ (Hailo, 13 or 26 TOPS, PCIe) is a separate add-on and is not counted here.'
+    rule: '25 % of the RAM of the smallest variant (our heuristic, not an official figure); the OS, the
+      desktop and other processes use the rest. Flash: not applicable, storage is an SD card.'
+    evidence:
+      cores: 'Product brief Oct-2026, p. 3 (read): ''BCM2712 2.4GHz quad-core 64-bit Arm Cortex-A76 CPU''.'
+      clock_mhz: 'Product brief Oct-2026, p. 2-3 (read): Cortex-A76 at 2.4 GHz.'
+      ram_kb: 'Product brief Oct-2026, p. 3 (read): ''LPDDR4X-4267 SDRAM (options for 1GB, 2GB, 4GB, 8GB
+        and 16GB)''; in production until at least January 2036.'
+  rpi-pico:
+    ai_note: 'Cortex-M0+ without FPU or DSP instructions: TFLM only with tiny int8-quantized networks
+      (e.g. KWS/small sensors) and classical classifiers in C. The tflm_small classification is our judgment,
+      not a vendor figure. The RP2040 has no internal flash: the 2 MB belong to the board (the chip supports
+      up to 16 MB external).'
+    rule: 40 % of the SRAM and 50 % of the flash (our heuristic, not an official figure); the rest for
+      stack, runtime and firmware
+    evidence:
+      cores: 'Pico product brief (Jan-2021), p. 3 (read): ''Dual-core Arm Cortex-M0+ @ 133MHz''.'
+      clock_mhz: 'RP2040 product brief (Aug-2022), p. 3 (read): ''Dual ARM Cortex-M0+ @ 133 MHz''.'
+      sram_kb: 'RP2040 product brief (Aug-2022), p. 3 (read): ''264kB on-chip SRAM in six independent
+        banks''; up to 16MB of off-chip flash over QSPI.'
+      flash_kb: 'Pico product brief (Jan-2021), p. 3 (read): ''264KB on-chip SRAM; 2MB on-board QSPI Flash''.
+        Pico W (brief Apr-2024, p. 3, read): the same.'
+  rpi-pico-2:
+    ai_note: 'Cortex-M33 with FPU (stated in the RP2350 brief; DSP per Arm) with twice the RAM of the
+      Pico: TFLM with small quantized networks. The classification is our judgment. The RP2350A has no
+      internal flash; the 4 MB belong to the board (the RP2354 variants integrate 2 MB). The chip supports
+      up to 16 MB of external QSPI flash/PSRAM. The Pico 2 W variant has not been verified.'
+    rule: 40 % of the SRAM and 50 % of the flash (our heuristic, not an official figure); the rest for
+      stack, runtime and firmware
+    evidence:
+      cores: 'RP2350 product brief (Aug-2024), p. 3 (read): ''Dual Arm Cortex-M33 or dual Hazard3 RISC-V
+        processors @ 150MHz''. Pico 2 (datasheet release 5, p. 5, read): the same.'
+      clock_mhz: 'Pico 2 datasheet (release 5), p. 5 (read): ''at up to 150 MHz''.'
+      sram_kb: 'Pico 2 datasheet (release 5), p. 5 (read): ''520 kB multi-bank high performance SRAM'';
+        RP2350 brief p. 3: ten independent banks.'
+      flash_kb: 'Pico 2 datasheet (release 5), p. 4 (read): ''RP2350A microcontroller with 4 MB flash''.
+        RP2350 brief p. 3: the RP2354 parts stack 2 MB of flash; up to 16 MB of external QSPI flash/PSRAM.'
+  stm32f103:
+    ai_note: '20 KB of SRAM and 64 KB of flash (the CB variant reaches 128 KB): only trees/linear models
+      in C fit and, with luck, a tiny network; full TFLM is not realistic. No FPU (float inference runs
+      in software). Many cheap ''Blue Pill'' boards carry clones: check the chip.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 10 KB'
+    evidence:
+      clock_mhz: 'datasheet DS5319: 72 MHz maximum frequency, Cortex-M3'
+      flash_kb: 'ST page for the C8: 64 Kbytes of Flash memory, 72 MHz CPU; the datasheet covers x8 (64
+        KB) and xB (128 KB)'
+  stm32f411:
+    ai_note: 'Cortex-M4 with single-precision FPU and 128 KB of SRAM: TFLM/X-CUBE-AI with small networks
+      (e.g. CNN1D or int8 MLP of tens of KB). No NN accelerator.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 32 KB'
+    evidence:
+      clock_mhz: 'ST: Cortex-M4 operating at a frequency of up to 100 MHz, single-precision FPU'
+      flash_kb: 'datasheet DS10314: xC 256 KB and xE 512 KB variants'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32F411CE: Cortex-M4 with FPU at 100 MHz, 128 KB SRAM, 512 KB flash (STM32F411CEUx).'
+  stm32f446:
+    ai_note: 'Cortex-M4F at 180 MHz, 128 KB of SRAM (112+16 KB; 4 KB backup separate): small networks
+      with TFLM/X-CUBE-AI. No NN accelerator.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 32 KB'
+    evidence:
+      sram_kb: 'datasheet DS10693: SRAM1 112 KB + SRAM2 16 KB = 128 KB (plus 4 KB backup SRAM)'
+      flash_kb: 'datasheet: 512 KB on xE; xC/xM-C listed with 256 KB'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32F446RE: Cortex-M4 with FPU at 180 MHz, 128 KB SRAM, 512 KB flash (STM32F446RETx).'
+  stm32l476:
+    ai_note: 'Low-power Cortex-M4F at 80 MHz, 128 KB of SRAM (96 KB + 32 KB with parity) and up to 1 MB
+      of flash: good for small networks with little energy; latency is higher than on M7/M33.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 32 KB'
+    evidence:
+      clock_mhz: 'ST: ultra-low-power Cortex-M4 MCU 80 MHz with FPU'
+      flash_kb: 'ST: up to 1 Mbyte of flash in two banks; the RE/QE variants have 512 KB'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32L476RG: Cortex-M4 with FPU at 80 MHz, SRAM1 96 KB + SRAM2 32 KB, 1024 KB flash; the L476JE
+        has 512 KB.'
+  stm32u585:
+    ai_note: 'Cortex-M33 at 160 MHz with ~786 KB of SRAM and 2 MB of flash: medium int8 networks with
+      TFLM/ST Edge AI. No NPU. Minor discrepancy: the ST page says 786 KB (ECC off) / 722 KB (ECC on);
+      the datasheet table lists 784 KB.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 32 KB'
+    evidence:
+      clock_mhz: 'datasheet DS13086: Cortex-M33 with TrustZone and FPU up to 160 MHz'
+      sram_kb: 'ST: 786-Kbyte SRAM with ECC off or 722-Kbyte incl. 322 KB with ECC on (datasheet: 784
+        KB)'
+      flash_kb: 'datasheet: 2 Mbytes of embedded flash memory, 2 banks'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32U585AI: Cortex-M33 with FPU at 160 MHz, SRAM 192+64+512+16 = 784 KB (matches the datasheet
+        table), 2048 KB flash.'
+  stm32h743:
+    ai_note: Cortex-M7 at 480 MHz, up to 1 MB of RAM split into blocks (TCM + user SRAM + 4 KB backup;
+      not contiguous) and 2 MB of flash (xI; xG has 1 MB). Medium networks with TFLM/ST Edge AI; no NPU.
+      Rev. V silicon is needed for 480 MHz.
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 256 KB; the 1024 KB include TCM (192 KB) and user SRAM (up to 864 KB), not contiguous'
+    evidence:
+      clock_mhz: 'datasheet: Cortex-M7 up to 480 MHz (only rev. V for 480 MHz)'
+      flash_kb: 'datasheet: 1 MB per bank on xI (512 KB per bank on xG)'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32H743BI: Cortex-M7 with double-precision FPU at 480 MHz; DTCM 128 KB + RAM_D1 512 KB + RAM_D2
+        288 KB + RAM_D3 64 KB (+ 64 KB ITCM); flash 2 x 1024 KB.'
+  stm32h747:
+    ai_note: 'Dual core: M7 at 480 MHz and M4 at 240 MHz (the M4 is left for auxiliary tasks). Same memory
+      map as the H743: up to 1 MB of non-contiguous RAM and 2 MB of flash (xI). No NPU.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 256 KB; RAM split into non-contiguous blocks (TCM + user SRAM)'
+    evidence:
+      clock_mhz: 'ST: Cortex-M7 up to 480 MHz and Cortex-M4 up to 240 MHz, both with FPU'
+      flash_kb: 'datasheet: 2 MB on xI; xG 1 MB'
+      cores: 'ST: dual-core Arm M7/M4'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32H747XI: Cortex-M7 at 480 MHz and Cortex-M4 at 240 MHz; same RAM layout as the H743; flash
+        2 x 1024 KB.'
+  stm32n6:
+    ai_note: 'Cortex-M55 at 800 MHz with ~4.2 MB of contiguous RAM and a Neural-ART NPU (600 GOPS, 288
+      MACs/cycle according to an ST summary) only on the N6x7 line; the N6x5 has no NPU. Deployed with
+      ST Edge AI Core (quantized models), not generic TFLM on the NPU. Internal flash: none declared in
+      what was searched, null. The MAC figure varies between sources (72-2304 configurable vs 288).'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure) (internal flash not declared: code goes in external xSPI flash depending on the board)'
+    evidence:
+      clock_mhz: 'ST: Cortex-M55 at 800 MHz; NPU at 1 GHz, 600 GOPS'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32N657: Cortex-M55 at 800 MHz; no internal flash (only SRAM banks, about 4.1 MB in total);
+        consistent with ST''s ''4.2 MB of contiguous RAM''.'
+  stm32g474:
+    ai_note: 'Cortex-M4F at 170 MHz with 128 KB of SRAM (includes 32 KB CCM not accessible by DMA) and
+      up to 512 KB of flash: small networks; aimed at motor/power control rather than AI.'
+    rule: '40 % of the SRAM (our heuristic); flash minus firmware/boot reserve (our assumption, not a
+      vendor figure): 32 KB; 128 KB = SRAM1 80 + SRAM2 16 + CCM 32'
+    evidence:
+      clock_mhz: 'datasheet: Cortex-M4 up to 170 MHz (Range 1 boost)'
+      flash_kb: 'ST: up to 512 Kbytes of Flash and 128 Kbytes of SRAM (128/256/512 KB family)'
+      pack_check: 'Cross-check (NOT a datasheet; DFP package that ST maintains on GitHub, read 2026-10-28):
+        STM32G474CB/RE: Cortex-M4 with FPU at 170 MHz, 128 KB SRAM, 128 KB (CB) or 512 KB (RE) flash.'
+# Spanish phrases that appear inside names, cpu/soc strings and evidence values -> English (substring replace, longest first).
+phrases:
+  "null (sin flash en el chip, salvo el U4WDH; la aporta el módulo)": "null (no flash on the chip, except the U4WDH; the module provides it)"
+  "null (variantes con flash en paquete o en módulo)": "null (variants with in-package or module flash)"
+  "null (flash externa/en paquete según variante)": "null (external or in-package flash, depending on the variant)"
+  "16 MB máximo en módulo/paquete": "16 MB maximum in module/package"
+  "ensamblador vectorial para S3": "vector assembly for S3"
+  "null (flash en paquete FH4/FH8X o externa según módulo)": "null (in-package FH4/FH8X flash or external, depending on the module)"
+  "null (flash en paquete FH4/FH8 o en el módulo)": "null (in-package FH4/FH8 flash or in the module)"
+  "null (flash en paquete C5HF4 o en el módulo)": "null (in-package C5HF4 flash or in the module)"
+  "32 MB (máximo mapeable de flash o PSRAM externas)": "32 MB (maximum mappable external flash or PSRAM)"
+  "null (sin flash en el chip)": "null (no flash on the chip)"
+  "64 MB (controlador); 16/32 MB en paquete": "64 MB (controller); 16/32 MB in package"
+  "contraste con el CMSIS-Pack de ST": "cross-check with ST's CMSIS Pack"
+  "flash en paquete": "in-package flash"
+  "PSRAM en paquete": "in-package PSRAM"
+  "en paquete": "in package"
+  "flash 4 MB": "4 MB flash"
+  "(+ núcleo LP)": "(+ LP core)"
+  "(o 2 RISC-V Hazard3, a elegir)": "(or 2 RISC-V Hazard3, selectable)"
+  "de 4 núcleos, 64 bit": "4 cores, 64-bit"
+  "de 2 núcleos": "2 cores"
+  "un núcleo": "one core"
+  "(asimétrico)": "(asymmetric)"
+  "FPU doble precisión": "double-precision FPU"
+  "SiP con die": "SiP with a die"
+  "mapeables (1 GB a nivel dispositivo)": "mappable (1 GB at device level)"
+  "(4 MiB mapeables a la vez)": "(4 MiB mappable at once)"
+  "(espacio virtual)": "(virtual space)"
+  "(variantes ": "(variants "
+  "10,5 MB": "10.5 MB"
+  "4,2 MB": "4.2 MB"

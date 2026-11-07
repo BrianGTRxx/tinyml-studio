@@ -1,0 +1,50 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest
+
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pip install -e ".[dev]"
+      - name: Pruebas de seguridad y sidecar (node puro, sin descargar el binario de Electron)
+        working-directory: ui
+        run: |
+          npm ci --ignore-scripts
+          npm test
+        env:
+          TINYML_PYTHON: python
+
+  keras:
+    # MLP Keras -> TFLite int8 verificado también con el intérprete real de TFLite Micro
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,ml,tflm]"
+      - run: pytest tests/test_keras_tflite.py tests/test_cnn1d.py tests/test_api_keras_jobs.py

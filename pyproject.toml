@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tinyml_studio"
+version = "0.0.1"
+description = "TinyML Studio: núcleo Python (sidecar) para preparar, entrenar y exportar modelos TinyML"
+requires-python = ">=3.10"
+license = {text = "GPL-3.0-only"}
+authors = [{name = "BrianGTRxx"}]
+classifiers = ["License :: OSI Approved :: GNU General Public License v3 (GPLv3)"]
+dependencies = [
+  "numpy",
+  "pandas",
+  "scipy",
+  "scikit-learn",
+  "joblib",
+  "fastapi",
+  "uvicorn",
+  "pydantic>=2",
+  "psutil",
+  "pyyaml",
+]
+
+[project.optional-dependencies]
+ml = ["scikit-learn", "tensorflow"]
+tflm = ["tflite-micro"]
+tui = ["textual>=0.80", "pillow>=10.1", "fpdf2>=2.7"]
+viz = ["plotly"]
+dev = ["pytest", "ruff", "httpx", "scikit-learn", "plotly", "textual>=0.80", "pillow>=10.1", "fpdf2>=2.7", "pypdf"]
+bench = ["tensorflow", "torch", "onnx", "onnxruntime", "scikit-learn"]
+
+[project.scripts]
+tinyml-studio = "tinyml_studio.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["tinyml_studio*"]
+
+[tool.setuptools.package-data]
+# datos que copia packaging/build_wheel.py a tinyml_studio/_data antes de construir la rueda
+tinyml_studio = ["_data/**/*", "render/fonts/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["reference", "datasets", "ui", ".claude"]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# pares de textos bilingües tr(es, en) y llamadas de dibujo: las líneas largas son legibles tal cual
+"tinyml_studio/render/*.py" = ["E501"]

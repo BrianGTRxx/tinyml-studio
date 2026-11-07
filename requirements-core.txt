@@ -1,0 +1,14 @@
+# Núcleo "lite" (sin TensorFlow/Keras) para congelar con PyInstaller: packaging/build_core.py --variant lite
+# requirements.txt incluye TensorFlow, jupyter y herramientas de desarrollo: NO usarlo para empaquetar.
+# Después: pip install --no-deps -e .   (para que PyInstaller encuentre tinyml_studio)
+numpy
+pandas
+fastapi
+uvicorn
+pydantic>=2
+psutil
+pyyaml
+scikit-learn
+textual
+pillow
+fpdf2

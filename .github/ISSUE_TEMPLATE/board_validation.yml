@@ -1,0 +1,46 @@
+name: Tested on a real board
+description: Report what happened when you ran an exported model on real hardware
+labels: ["hardware validation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Results on real boards are the most useful contribution: the project has only been verified on an ESP32-S3 with two small examples. Thank you.
+  - type: input
+    id: board
+    attributes:
+      label: Board and module
+      placeholder: "ESP32-S3-WROOM-1-N16R8, Raspberry Pi Pico..."
+    validations:
+      required: true
+  - type: input
+    id: toolchain
+    attributes:
+      label: Toolchain and versions
+      placeholder: "Arduino IDE 2.3, esp32 core 3.3.3..."
+    validations:
+      required: true
+  - type: input
+    id: task
+    attributes:
+      label: Task and model
+      placeholder: "Classification, logistic regression, 4 inputs"
+    validations:
+      required: true
+  - type: dropdown
+    id: matches
+    attributes:
+      label: Did the board give the same answers as the app?
+      options:
+        - Yes, all of them
+        - Mostly
+        - No
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Size it used, time per prediction if you measured it, and where it differed from the app. Please include the numbers.
+    validations:
+      required: true
