@@ -188,20 +188,22 @@ ipcMain.handle('env:apply', trusted(async () => {
   return { core: CORE.kind, error: startError };
 }));
 
-// ---- aviso de versión nueva: solo avisa; descargar e instalar lo decide el usuario ----------------------------
+// ---- aviso de versión nueva: avisa; descargar e instalar solo ocurre si el usuario pulsa "Actualizar ahora" ----------------------------
 const UPDATES_FILE = path.join(app.getPath('userData'), 'updates.json');
 const UPDATE_REPO = updates.parseRepo(require('../package.json').homepage);
 let lastUpdate = null; // resultado de la última comprobación: la dirección a abrir sale de aquí, nunca del renderer
+// Instalar desde la app solo en Windows y con la copia instalada por el instalador (la portable no tiene desinstalador).
+const canInstallUpdate = () => process.platform === 'win32' && app.isPackaged && updates.isInstalledCopy(process.execPath, 'TinyML Studio');
 const updState = () => {
   const p = updates.loadPrefs(UPDATES_FILE);
-  return { version: app.getVersion(), auto: p.auto, skipped: p.skipped, repo: UPDATE_REPO };
+  return { version: app.getVersion(), auto: p.auto, skipped: p.skipped, repo: UPDATE_REPO, canInstall: canInstallUpdate() };
 };
+// La sesión por defecto bloquea TODO lo que no sea la propia página (security.hardenSession), así que net.fetch
+// fallaba con ERR_BLOCKED_BY_CLIENT. Se usa una sesión aparte, sin cookies y solo en memoria, que no carga ninguna
+// página; las direcciones salen de la respuesta de GitHub, se validan en updates.js y el renderer nunca las elige.
+const updFetch = (...a) => session.fromPartition('tinyml-update-check').fetch(...a);
 async function runUpdateCheck() {
-  // La sesión por defecto bloquea TODO lo que no sea la propia página (security.hardenSession), así que net.fetch
-  // fallaba con ERR_BLOCKED_BY_CLIENT. Se usa una sesión aparte, sin cookies y solo en memoria, que no carga ninguna
-  // página; la dirección es fija (api.github.com del repositorio) y la fija updates.js, nunca el renderer.
-  const updSession = session.fromPartition('tinyml-update-check');
-  const r = await updates.checkForUpdate({ repo: UPDATE_REPO, current: app.getVersion(), fetchFn: (...a) => updSession.fetch(...a) });
+  const r = await updates.checkForUpdate({ repo: UPDATE_REPO, current: app.getVersion(), fetchFn: updFetch });
   const p = updates.loadPrefs(UPDATES_FILE);
   p.lastCheck = Date.now();
   updates.savePrefs(UPDATES_FILE, p);
@@ -228,6 +230,35 @@ ipcMain.handle('updates:skip', trusted(() => {
   if (lastUpdate && lastUpdate.latest) p.skipped = lastUpdate.latest.version;
   updates.savePrefs(UPDATES_FILE, p);
   return updState();
+}));
+let installing = false;
+ipcMain.handle('updates:install', trusted(async () => {
+  const l = lastUpdate && lastUpdate.status === 'newer' ? lastUpdate.latest : null;
+  if (!l || !l.installer) throw new Error('no hay una versión nueva con instalador que descargar');
+  if (!canInstallUpdate()) throw new Error('esta copia no se puede actualizar desde la app');
+  if (installing) throw new Error('ya se está descargando');
+  if (SMOKE) return { started: false };
+  installing = true;
+  try {
+    let lastSent = 0;
+    const exe = await updates.downloadVerified({
+      fetchFn: updFetch,
+      installer: l.installer,
+      destDir: path.join(app.getPath('temp'), 'tinyml-studio-update'),
+      onProgress: (pr) => {
+        const now = Date.now();
+        if (now - lastSent > 200 || pr.done === pr.total) { lastSent = now; send('updates:progress', pr); }
+      },
+    });
+    // Se abre el instalador normal (el usuario lo ve y lo confirma) y la app se cierra para que pueda reemplazarla.
+    const child = require('node:child_process').spawn(exe, [], { detached: true, stdio: 'ignore' });
+    await new Promise((resolve, reject) => { child.once('error', reject); child.once('spawn', resolve); });
+    child.unref();
+    setTimeout(() => app.quit(), 600);
+    return { started: true };
+  } finally {
+    installing = false;
+  }
 }));
 ipcMain.handle('updates:open', trusted(async () => {
   const url = lastUpdate && lastUpdate.latest && lastUpdate.latest.url;

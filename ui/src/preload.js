@@ -36,6 +36,12 @@ contextBridge.exposeInMainWorld('tinyml', {
   updatesAuto: () => ipcRenderer.invoke('updates:auto'),
   updatesSkip: () => ipcRenderer.invoke('updates:skip'),
   updatesOpen: () => ipcRenderer.invoke('updates:open'),
+  updatesInstall: () => ipcRenderer.invoke('updates:install'),
+  onUpdatesProgress: (cb) => {
+    const handler = (_e, msg) => cb(msg);
+    ipcRenderer.on('updates:progress', handler);
+    return () => ipcRenderer.removeListener('updates:progress', handler);
+  },
   // Instalador del entorno gestionado: solo ids de componentes del manifiesto (nunca paquetes ni rutas).
   installerStatus: () => ipcRenderer.invoke('installer:status'),
   installerStart: (ids) => ipcRenderer.invoke('installer:start', ids),
