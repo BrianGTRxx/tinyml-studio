@@ -79,6 +79,18 @@ flowchart TB
 | **Cartes** | Fiches pour ESP32-S3 et autres ESP32, Arduino, Raspberry Pi et STM32, chaque donnée avec sa source. |
 | **Matériel** | Utilise votre GPU NVIDIA ou AMD s'il est disponible, affiche charge et température pendant l'entraînement, trois interfaces (bureau, terminal, CLI). |
 
+## Ce qu'il peut entraîner et exporter
+Apprentissage supervisé (classification et régression) et détection d'anomalies non supervisée. L'application propose la tâche d'après vos colonnes et vous la confirmez.
+
+| | |
+|---|---|
+| **Tâches** | Classification et régression, détection d'anomalies sans étiquettes (Isolation Forest, One-Class SVM) entraînée uniquement sur des données normales, et rejet de classe inconnue pour que le modèle puisse répondre « je ne sais pas ». Le clustering n'est pas inclus. |
+| **Modèles** | Classiques: Arbre de décision, random forest, extra trees, gradient boosting, régression logistique et linéaire, Lasso, Elastic Net, LDA, SVM linéaire, SVM et SVR, k-NN, Naive Bayes gaussien, MLP. Réseaux: MLP Keras et 1D-CNN sur des fenêtres de lignes consécutives, avec un backend TensorFlow ou PyTorch. |
+| **Nettoyage et augmentation** | Imputation, valeurs absurdes, valeurs aberrantes (IQR ou z-score), mise à l'échelle (standard, min-max, robuste), doublons et filtres. Augmentation facultative des lignes d'entraînement par bruit gaussien ou interpolation de type SMOTE. Tout est ajusté uniquement sur train. |
+| **Découpage et évaluation** | Aléatoire, stratifié, par groupe ou par blocs temporels, avec équilibrage des classes en option. Benchmark en validation croisée, recherche d'hyperparamètres selon votre budget de flash et de RAM, importance par permutation. Le jeu de test n'est utilisé qu'une fois. |
+| **Export** | C99 sans dépendances (modèles linéaires, arbres et forêts, SVM, MLP, Naive Bayes, et une disposition compacte pour les forêts), TFLite (float, int8, float16), ONNX et sketchs Arduino. Tous les modèles n'exportent pas vers tous les formats: L'application indique lesquels le font. |
+| **Vérifications** | Rapport de flash et de RAM par carte, comparaison Keras, TFLite et int8, et vecteurs de test qui comparent le code C à Python. La latence est une estimation, pas une mesure. |
+
 <a id="verified"></a>
 ## Vérifié sur matériel
 Deux petits exemples réels ont été exécutés de bout en bout sur une ESP32-S3. Ils montrent que la chaîne fonctionne ; ce ne sont pas des benchmarks.

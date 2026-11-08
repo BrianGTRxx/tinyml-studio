@@ -79,6 +79,18 @@ flowchart TB
 | **Placas** | Fichas de ESP32-S3 e outras ESP32, Arduino, Raspberry Pi e STM32, cada dado com sua fonte. |
 | **Hardware** | Usa sua GPU NVIDIA ou AMD quando disponível, mostra carga e temperatura durante o treino, três interfaces (desktop, terminal, CLI). |
 
+## O que ele pode treinar e exportar
+Aprendizado supervisionado (classificação e regressão) e detecção de anomalias não supervisionada. O app sugere a tarefa a partir das suas colunas e você a confirma.
+
+| | |
+|---|---|
+| **Tarefas** | Classificação e regressão, detecção de anomalias sem rótulos (Isolation Forest, One-Class SVM) treinada só com dados normais, e rejeição de classe desconhecida para que o modelo possa responder "não sei". Agrupamento (clustering) não está incluído. |
+| **Modelos** | Clássicos: Árvore de decisão, random forest, extra trees, gradient boosting, regressão logística e linear, Lasso, Elastic Net, LDA, SVM linear, SVM e SVR, k-NN, Naive Bayes gaussiano, MLP. Redes: MLP do Keras e 1D-CNN sobre janelas de linhas consecutivas, com backend TensorFlow ou PyTorch. |
+| **Limpeza e aumento** | Imputação, valores absurdos, outliers (IQR ou z-score), escala (padrão, min-max, robusta), duplicatas e filtros. Aumento opcional das linhas de treino com ruído gaussiano ou interpolação no estilo SMOTE. Tudo é ajustado só com o treino. |
+| **Divisão e avaliação** | Aleatória, estratificada, por grupo ou por blocos temporais, com balanceamento de classes opcional. Benchmark com validação cruzada, busca de hiperparâmetros dentro do seu orçamento de flash e RAM, importância por permutação. O teste é usado uma única vez. |
+| **Exportação** | C99 sem dependências (modelos lineares, árvores e florestas, SVM, MLP, Naive Bayes, e um formato compacto para florestas), TFLite (float, int8, float16), ONNX e sketches de Arduino. Nem todo modelo exporta para tudo: O app diz quais exportam. |
+| **Verificações** | Relatório de flash e RAM por placa, comparação Keras, TFLite e int8, e vetores de teste que comparam o C com o Python. A latência é uma estimativa, não uma medição. |
+
 <a id="verified"></a>
 ## Verificado em hardware
 Dois exemplos pequenos e reais foram executados de ponta a ponta em uma ESP32-S3. Mostram que o fluxo funciona; não são benchmarks.

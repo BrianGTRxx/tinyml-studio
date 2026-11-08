@@ -77,6 +77,18 @@ flowchart TB
 | **Placas** | Fichas de ESP32-S3 y otras ESP32, Arduino, Raspberry Pi y STM32, cada dato con su fuente. |
 | **Hardware** | Usa tu GPU NVIDIA o AMD si está disponible, muestra carga y temperatura al entrenar, tres interfaces (escritorio, terminal, CLI). |
 
+## Qué puede entrenar y exportar
+Aprendizaje supervisado (clasificación y regresión) y detección de anomalías sin supervisión. La app sugiere la tarea según tus columnas y tú la confirmas.
+
+| | |
+|---|---|
+| **Tareas** | Clasificación y regresión, detección de anomalías sin etiquetas (Isolation Forest, One-Class SVM) entrenada solo con datos normales, y rechazo de clase desconocida para que el modelo pueda responder "no sé". No incluye agrupamiento (clustering). |
+| **Modelos** | Clásicos: Árbol de decisión, random forest, extra trees, gradient boosting, regresión logística y lineal, Lasso, Elastic Net, LDA, SVM lineal, SVM y SVR, k-NN, Naive Bayes gaussiano, MLP. Redes: MLP de Keras y 1D-CNN sobre ventanas de filas consecutivas, con backend TensorFlow o PyTorch. |
+| **Limpieza y aumento** | Imputación, valores absurdos, atípicos (IQR o z-score), escalado (estándar, min-max, robusto), duplicados y filtros. Aumento opcional de filas de entrenamiento con ruido gaussiano o interpolación tipo SMOTE. Todo se ajusta solo con train. |
+| **Partición y evaluación** | Aleatoria, estratificada, por grupo o por bloques temporales, con balanceo de clases opcional. Benchmark con validación cruzada, búsqueda de hiperparámetros bajo tu presupuesto de flash y RAM, importancia por permutación. El test se usa una sola vez. |
+| **Exportación** | C99 sin dependencias (modelos lineales, árboles y bosques, SVM, MLP, Naive Bayes, y un formato compacto para bosques), TFLite (float, int8, float16), ONNX y sketches de Arduino. No todos los modelos exportan a todo: La app te dice cuáles sí. |
+| **Verificación** | Informe de flash y RAM por placa, comparación Keras contra TFLite contra int8, y vectores de prueba que comparan el C con Python. La latencia es una estimación, no una medición. |
+
 <a id="verified"></a>
 ## Verificado en hardware
 Se han ejecutado de principio a fin dos ejemplos pequeños y reales en una ESP32-S3. Demuestran que la cadena funciona; no son pruebas comparativas.

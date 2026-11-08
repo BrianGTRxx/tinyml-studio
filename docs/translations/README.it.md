@@ -79,6 +79,18 @@ flowchart TB
 | **Schede** | Schede tecniche per ESP32-S3 e altre ESP32, Arduino, Raspberry Pi e STM32, ogni dato con la sua fonte. |
 | **Hardware** | Usa la tua GPU NVIDIA o AMD se disponibile, mostra carico e temperatura durante l'addestramento, tre interfacce (desktop, terminale, CLI). |
 
+## Cosa può addestrare ed esportare
+Apprendimento supervisionato (classificazione e regressione) e rilevamento di anomalie non supervisionato. L'app suggerisce il compito in base alle colonne e tu lo confermi.
+
+| | |
+|---|---|
+| **Compiti** | Classificazione e regressione, rilevamento di anomalie senza etichette (Isolation Forest, One-Class SVM) addestrato solo su dati normali, e rifiuto di classe sconosciuta, così il modello può rispondere "non lo so". Il clustering non è incluso. |
+| **Modelli** | Classici: Albero decisionale, random forest, extra trees, gradient boosting, regressione logistica e lineare, Lasso, Elastic Net, LDA, SVM lineare, SVM e SVR, k-NN, Naive Bayes gaussiano, MLP. Reti: MLP di Keras e 1D-CNN su finestre di righe consecutive, con backend TensorFlow o PyTorch. |
+| **Pulizia e aumento** | Imputazione, valori assurdi, outlier (IQR o z-score), scalatura (standard, min-max, robusta), duplicati e filtri. Aumento facoltativo delle righe di addestramento con rumore gaussiano o interpolazione in stile SMOTE. Tutto viene calcolato solo sul train. |
+| **Suddivisione e valutazione** | Casuale, stratificata, per gruppo o a blocchi temporali, con bilanciamento delle classi facoltativo. Benchmark con validazione incrociata, ricerca degli iperparametri entro il tuo budget di flash e RAM, importanza per permutazione. Il test si usa una sola volta. |
+| **Esportazione** | C99 senza dipendenze (modelli lineari, alberi e foreste, SVM, MLP, Naive Bayes e un formato compatto per le foreste), TFLite (float, int8, float16), ONNX e sketch Arduino. Non tutti i modelli si esportano ovunque: L'app indica quali sì. |
+| **Verifiche** | Rapporto di flash e RAM per scheda, confronto Keras, TFLite e int8, e vettori di test che confrontano il codice C con Python. La latenza è una stima, non una misura. |
+
 <a id="verified"></a>
 ## Verificato su hardware
 Due piccoli esempi reali sono stati eseguiti dall'inizio alla fine su una ESP32-S3. Mostrano che la catena funziona; non sono benchmark.

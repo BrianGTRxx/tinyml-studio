@@ -77,6 +77,18 @@ flowchart TB
 | **Boards** | Sheets for ESP32-S3 and other ESP32, Arduino, Raspberry Pi and STM32 boards, each field with its source. |
 | **Hardware** | Uses your NVIDIA or AMD GPU when available, shows load and temperature while training, three interfaces (desktop, terminal, CLI). |
 
+## What it can train and export
+Supervised learning (classification and regression) and unsupervised anomaly detection. The app suggests the task from your columns and you confirm it.
+
+| | |
+|---|---|
+| **Tasks** | Classification and regression, anomaly detection without labels (Isolation Forest, One-Class SVM) trained on normal data only, and unknown-class rejection so the model can answer "I do not know". Clustering is not included. |
+| **Models** | Classical: Decision tree, random forest, extra trees, gradient boosting, logistic and linear regression, Lasso, Elastic Net, LDA, linear SVM, SVM and SVR, k-NN, Gaussian Naive Bayes, MLP. Neural: Keras MLP and 1D-CNN over windows of consecutive rows, with a TensorFlow or PyTorch backend. |
+| **Cleaning and augmentation** | Imputation, absurd values, outliers (IQR or z-score), scaling (standard, min-max, robust), duplicates and filters. Optional augmentation of training rows with Gaussian noise or SMOTE-style interpolation. Everything is fitted on train only. |
+| **Split and evaluation** | Random, stratified, by group or temporal blocks, with optional class balancing. Cross-validated benchmark, hyperparameter search under your flash and RAM budget, permutation importance. The test set is used once. |
+| **Export** | Dependency-free C99 (linear models, trees and forests, SVM, MLP, Naive Bayes, plus a compact layout for forests), TFLite (float, int8, float16), ONNX and Arduino sketches. Not every model exports everywhere: The app tells you which ones do. |
+| **Checks** | Fit report for flash and RAM per board, Keras against TFLite against int8 comparison, and test vectors that check the C code against Python. Latency is an estimate, not a measurement. |
+
 <a id="verified"></a>
 ## Verified on hardware
 Two small, real examples have been run end to end on an ESP32-S3. They show that the pipeline works; they are not benchmarks.
