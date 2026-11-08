@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
-const { app, BrowserWindow, dialog, ipcMain, Menu, session, shell, net } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, Menu, session, shell } = require('electron');
 const { Sidecar } = require('./sidecar');
 const security = require('./security');
 const bridge = require('./bridge');
@@ -197,7 +197,11 @@ const updState = () => {
   return { version: app.getVersion(), auto: p.auto, skipped: p.skipped, repo: UPDATE_REPO };
 };
 async function runUpdateCheck() {
-  const r = await updates.checkForUpdate({ repo: UPDATE_REPO, current: app.getVersion(), fetchFn: (...a) => net.fetch(...a) });
+  // La sesión por defecto bloquea TODO lo que no sea la propia página (security.hardenSession), así que net.fetch
+  // fallaba con ERR_BLOCKED_BY_CLIENT. Se usa una sesión aparte, sin cookies y solo en memoria, que no carga ninguna
+  // página; la dirección es fija (api.github.com del repositorio) y la fija updates.js, nunca el renderer.
+  const updSession = session.fromPartition('tinyml-update-check');
+  const r = await updates.checkForUpdate({ repo: UPDATE_REPO, current: app.getVersion(), fetchFn: (...a) => updSession.fetch(...a) });
   const p = updates.loadPrefs(UPDATES_FILE);
   p.lastCheck = Date.now();
   updates.savePrefs(UPDATES_FILE, p);

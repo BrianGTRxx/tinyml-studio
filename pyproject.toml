@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tinyml_studio"
-version = "0.0.1"
+version = "0.0.2"
 description = "TinyML Studio: núcleo Python (sidecar) para preparar, entrenar y exportar modelos TinyML"
 requires-python = ">=3.10"
 license = {text = "GPL-3.0-only"}

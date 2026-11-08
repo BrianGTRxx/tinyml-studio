@@ -1,6 +1,6 @@
 {
   "name": "tinyml-studio",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Interfaz Electron de TinyML Studio (esqueleto seguro + sidecar Python)",
   "main": "src/main.js",
